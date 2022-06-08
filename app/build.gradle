@@ -31,6 +31,7 @@ android {
         sourceCompatibility "11"
         targetCompatibility "11"
     }
+    namespace 'org.dieschnittstelle.mobile.android.skeleton'
 }
 
 dependencies {
