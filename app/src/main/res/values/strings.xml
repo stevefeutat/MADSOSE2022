@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">StuffToDo</string>
+    <string name="itemNameInputField">Name</string>
+    <string name="itemDescriptionInputField">Description</string>
 </resources>
