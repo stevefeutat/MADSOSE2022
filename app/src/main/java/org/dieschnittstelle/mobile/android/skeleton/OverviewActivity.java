@@ -25,6 +25,7 @@ import org.dieschnittstelle.mobile.android.skeleton.databinding.ActivityOverview
 import org.dieschnittstelle.mobile.android.skeleton.model.IToDoItemCRUDOperations;
 import org.dieschnittstelle.mobile.android.skeleton.model.SimpleToDoItemCRUDOperations;
 import org.dieschnittstelle.mobile.android.skeleton.model.TodoItem;
+import org.dieschnittstelle.mobile.android.skeleton.util.MADAsyncOperationRunner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +39,7 @@ public class OverviewActivity extends AppCompatActivity {
     private IToDoItemCRUDOperations crudOperations;
     private ActivityResultLauncher<Intent> detailviewForNewItemActivityLauncher;
     private ProgressBar progressBar;
+    private MADAsyncOperationRunner operationRunner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +47,7 @@ public class OverviewActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         listView = findViewById(R.id.listView);
         progressBar = findViewById(R.id.progressBar);
+        operationRunner = new MADAsyncOperationRunner(this, progressBar);
         listviewAdapter = initialiseListviewAdapter();
         listView.setAdapter(listviewAdapter);
         listView.setOnItemClickListener(
@@ -60,15 +63,19 @@ public class OverviewActivity extends AppCompatActivity {
             onAddNewItem();
         });
         crudOperations = SimpleToDoItemCRUDOperations.getInstance();
-        progressBar.setVisibility(View.VISIBLE);
-        new Thread(()->{
-            List<TodoItem>items=crudOperations.readAllToDoItem();
-            runOnUiThread(()->{items.forEach(
-                    item -> this.addListItemView(item));
-                progressBar.setVisibility(View.GONE);
-            });
-        }).start();
-//        crudOperations.readAllToDoItem().forEach(item -> this.addListItemView(item));
+        operationRunner.run(
+                () -> crudOperations.readAllToDoItem(),
+                items -> {
+                    items.forEach(item -> this.addListItemView(item));
+                });
+//        progressBar.setVisibility(View.VISIBLE);
+//        new Thread(()->{
+//            List<TodoItem>items=crudOperations.readAllToDoItem();
+//            runOnUiThread(()->{items.forEach(
+//                    item -> this.addListItemView(item));
+//                progressBar.setVisibility(View.GONE);
+//            });
+//        }).start();
 
     }
 
