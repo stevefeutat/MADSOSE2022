@@ -14,9 +14,10 @@ import androidx.databinding.DataBindingUtil;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.dieschnittstelle.mobile.android.skeleton.databinding.ActivityListitemDetailviewBinding;
+import org.dieschnittstelle.mobile.android.skeleton.model.DetailviewViewModel;
 import org.dieschnittstelle.mobile.android.skeleton.model.TodoItem;
 
-public class DetailviewActivity extends AppCompatActivity {
+public class DetailviewActivity extends AppCompatActivity implements DetailviewViewModel {
     public static String ARG_ITEM = "item";
     private FloatingActionButton saveChangeOnItemButton;
     private TodoItem item;
