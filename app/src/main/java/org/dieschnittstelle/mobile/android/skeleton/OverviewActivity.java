@@ -31,7 +31,7 @@ public class OverviewActivity extends AppCompatActivity {
     public static final String LOGGER = "OverviewActivity";
     private ListView listView;
     private ArrayAdapter<TodoItem> listviewAdapter;
-    private List<TodoItem> listviewItems = new ArrayList<>();
+    private final List<TodoItem> listviewItems = new ArrayList<>();
     private FloatingActionButton addNewItemButton;
     private ActivityResultLauncher<Intent> detailviewForNewItemActivityLauncher;
 
@@ -65,11 +65,13 @@ public class OverviewActivity extends AppCompatActivity {
         return new ArrayAdapter<>(this, R.layout.activity_overview_listitem_view, listviewItems) {
             @NonNull
             @Override
-            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            public View getView(int position, @Nullable View existingListitemView, @NonNull ViewGroup parent) {
                 //1.take the data to be shown
                 TodoItem item = super.getItem(position);
                 //2.1 create the view to show the data
-                ViewGroup itemView = (ViewGroup) getLayoutInflater().inflate(R.layout.activity_overview_listitem_view, null);
+                ViewGroup itemView = (ViewGroup) (existingListitemView != null
+                        ? existingListitemView
+                        : getLayoutInflater().inflate(R.layout.activity_overview_listitem_view, null));
                 //2.2 read out the single view elements that would be used to show the data
                 TextView itemNameText = itemView.findViewById(R.id.itemName);
                 CheckBox itemCheckedCheckbox = itemView.findViewById(R.id.itemChecked);
@@ -90,7 +92,7 @@ public class OverviewActivity extends AppCompatActivity {
                     Log.i(LOGGER, "ResultCode: " + result.getResultCode());
                     Log.i(LOGGER, "Data: " + result.getData());
                     if (result.getResultCode() == Activity.RESULT_OK) {
-                        TodoItem item = (TodoItem) result.getData().getSerializableExtra(DetailviewActivity.ARG_ITEM);
+                        TodoItem item = (TodoItem) (result.getData() != null ? result.getData().getSerializableExtra(DetailviewActivity.ARG_ITEM) : null);
                         addListItemView(item);
                     }
 
