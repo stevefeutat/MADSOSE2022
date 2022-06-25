@@ -3,9 +3,6 @@ package org.dieschnittstelle.mobile.android.skeleton;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
-import android.widget.CheckBox;
-import android.widget.EditText;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,22 +12,25 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.dieschnittstelle.mobile.android.skeleton.databinding.ActivityListitemDetailviewBinding;
 import org.dieschnittstelle.mobile.android.skeleton.model.DetailviewViewModel;
+import org.dieschnittstelle.mobile.android.skeleton.model.IToDoItemCRUDOperations;
+import org.dieschnittstelle.mobile.android.skeleton.model.SimpleToDoItemCRUDOperations;
 import org.dieschnittstelle.mobile.android.skeleton.model.TodoItem;
 
 public class DetailviewActivity extends AppCompatActivity implements DetailviewViewModel {
-    public static String ARG_ITEM = "item";
-    private FloatingActionButton saveChangeOnItemButton;
+    public static String ARG_ITEM_ID = "itemId";
     private TodoItem item;
     private ActivityListitemDetailviewBinding binding;
+    private IToDoItemCRUDOperations crudOperations;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_listitem_detailview);
         this.binding = DataBindingUtil.setContentView(this, R.layout.activity_listitem_detailview);
-        saveChangeOnItemButton = findViewById(R.id.fab);
-
-        this.item = (TodoItem) getIntent().getSerializableExtra(ARG_ITEM);
+        this.crudOperations = SimpleToDoItemCRUDOperations.getInstance();
+        long itemId = getIntent().getLongExtra(ARG_ITEM_ID, -1);
+        if (itemId != -1) {
+            this.item = this.crudOperations.readToDoItem(itemId);
+        }
         if (this.item == null) {
             this.item = new TodoItem();
         }
@@ -43,7 +43,10 @@ public class DetailviewActivity extends AppCompatActivity implements DetailviewV
 
     public void onSaveItem() {
         Intent returnIntent = new Intent();
-        returnIntent.putExtra(ARG_ITEM, this.item);
+        this.item = (item.getId() > 0
+                ? crudOperations.updateToDoItem(this.item)
+                : crudOperations.createToDoItem(this.item));
+        returnIntent.putExtra(ARG_ITEM_ID, this.item.getId());
 
         setResult(Activity.RESULT_OK, returnIntent);
         finish();

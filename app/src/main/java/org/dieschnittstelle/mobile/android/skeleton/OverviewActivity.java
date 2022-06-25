@@ -8,9 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -28,7 +26,6 @@ import org.dieschnittstelle.mobile.android.skeleton.model.SimpleToDoItemCRUDOper
 import org.dieschnittstelle.mobile.android.skeleton.model.TodoItem;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class OverviewActivity extends AppCompatActivity {
@@ -59,7 +56,7 @@ public class OverviewActivity extends AppCompatActivity {
         addNewItemButton.setOnClickListener(v -> {
             onAddNewItem();
         });
-        crudOperations = new SimpleToDoItemCRUDOperations();
+        crudOperations = SimpleToDoItemCRUDOperations.getInstance();
         crudOperations.readAllToDoItem().forEach(item ->
                 this.addListItemView(item));
     }
@@ -95,7 +92,8 @@ public class OverviewActivity extends AppCompatActivity {
                     Log.i(LOGGER, "ResultCode: " + result.getResultCode());
                     Log.i(LOGGER, "Data: " + result.getData());
                     if (result.getResultCode() == Activity.RESULT_OK) {
-                        TodoItem item = (TodoItem) (result.getData() != null ? result.getData().getSerializableExtra(DetailviewActivity.ARG_ITEM) : null);
+                        long itemId =result.getData().getLongExtra(DetailviewActivity.ARG_ITEM_ID,-1);
+                        TodoItem item=crudOperations.readToDoItem(itemId);
                         addListItemView(item);
                     }
 
@@ -103,23 +101,18 @@ public class OverviewActivity extends AppCompatActivity {
     }
 
     private void addListItemView(TodoItem item) {
-//        TextView listItemView = (TextView) getLayoutInflater().inflate(R.layout.activity_overview_listitem_view, null);
-//        listItemView.setText(item);
-//        listView.addView(listItemView);
-//        listItemView.setOnClickListener(v -> onListItemSelected(((TextView) v).getText().toString()));
         listviewAdapter.add(item);
         listView.setSelection(listviewAdapter.getPosition(item));
     }
 
     private void onListItemSelected(TodoItem item) {
         Intent detailViewIntent = new Intent(this, DetailviewActivity.class);
-        detailViewIntent.putExtra(DetailviewActivity.ARG_ITEM, item);
+        detailViewIntent.putExtra(DetailviewActivity.ARG_ITEM_ID, item.getId());
         startActivity(detailViewIntent);
     }
 
     private void onAddNewItem() {
         Intent detailViewIntentForAddNewItem = new Intent(this, DetailviewActivity.class);
-//        startActivity(detailViewIntentForAddNewItem);
         detailviewForNewItemActivityLauncher.launch(detailViewIntentForAddNewItem);
     }
 

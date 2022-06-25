@@ -13,12 +13,12 @@ public class SimpleToDoItemCRUDOperations implements IToDoItemCRUDOperations {
 
     public static SimpleToDoItemCRUDOperations getInstance() {
         if (instance == null) {
-            return new SimpleToDoItemCRUDOperations();
+            instance= new SimpleToDoItemCRUDOperations();
         }
         return instance;
     }
 
-    public SimpleToDoItemCRUDOperations() {
+    private SimpleToDoItemCRUDOperations() {
         Arrays.asList(
                         "Kind zur Schule", "DHL Paket abholen", "Zum Zahnarzt", "Kind abholen", "Einkaufen"
                 )
