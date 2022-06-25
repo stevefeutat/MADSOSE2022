@@ -68,11 +68,18 @@ public class OverviewActivity extends AppCompatActivity {
             @NonNull
             @Override
             public View getView(int position, @Nullable View existingListitemView, @NonNull ViewGroup parent) {
-                //1.take the data to be shown
+                //data we want to show
                 TodoItem item = super.getItem(position);
-                ActivityOverviewListitemViewBinding itemBinding= DataBindingUtil.inflate(getLayoutInflater(),R.layout.activity_overview_listitem_view,null,false);
+                //the data binding object to show the data
+                ActivityOverviewListitemViewBinding itemBinding=(existingListitemView!=null
+                        ? (ActivityOverviewListitemViewBinding)existingListitemView.getTag()
+                        : DataBindingUtil.inflate(getLayoutInflater(),R.layout.activity_overview_listitem_view,null,false));
+
                 itemBinding.setItem(item);
-                return itemBinding.getRoot();
+                //the view in which the data is shown
+                View itemView=itemBinding.getRoot();
+                itemView.setTag(itemBinding);
+                return itemView;
 
             }
         };
