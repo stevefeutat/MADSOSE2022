@@ -18,8 +18,11 @@ public class SimpleToDoItemCRUDOperations implements IToDoItemCRUDOperations {
         return instance;
     }
 
-    private SimpleToDoItemCRUDOperations() {
-        Arrays.asList("Leonie", "Steve").forEach(name -> this.createToDoItem(new TodoItem(name)));
+    public SimpleToDoItemCRUDOperations() {
+        Arrays.asList(
+                        "Kind zur Schule", "DHL Paket abholen", "Zum Zahnarzt", "Kind abholen", "Einkaufen"
+                )
+                .forEach(name -> this.createToDoItem(new TodoItem(name)));
     }
 
     @Override

@@ -23,6 +23,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.dieschnittstelle.mobile.android.skeleton.databinding.ActivityOverviewListitemViewBinding;
+import org.dieschnittstelle.mobile.android.skeleton.model.IToDoItemCRUDOperations;
+import org.dieschnittstelle.mobile.android.skeleton.model.SimpleToDoItemCRUDOperations;
 import org.dieschnittstelle.mobile.android.skeleton.model.TodoItem;
 
 import java.util.ArrayList;
@@ -35,6 +37,7 @@ public class OverviewActivity extends AppCompatActivity {
     private ArrayAdapter<TodoItem> listviewAdapter;
     private final List<TodoItem> listviewItems = new ArrayList<>();
     private FloatingActionButton addNewItemButton;
+    private IToDoItemCRUDOperations crudOperations;
     private ActivityResultLauncher<Intent> detailviewForNewItemActivityLauncher;
 
     @Override
@@ -56,10 +59,9 @@ public class OverviewActivity extends AppCompatActivity {
         addNewItemButton.setOnClickListener(v -> {
             onAddNewItem();
         });
-
-        Arrays.asList("Leonie", "Steve").stream().map(name -> new TodoItem(name)).forEach(item ->
-                this.addListItemView(item)
-        );
+        crudOperations = new SimpleToDoItemCRUDOperations();
+        crudOperations.readAllToDoItem().forEach(item ->
+                this.addListItemView(item));
     }
 
     @NonNull
@@ -71,13 +73,13 @@ public class OverviewActivity extends AppCompatActivity {
                 //data we want to show
                 TodoItem item = super.getItem(position);
                 //the data binding object to show the data
-                ActivityOverviewListitemViewBinding itemBinding=(existingListitemView!=null
-                        ? (ActivityOverviewListitemViewBinding)existingListitemView.getTag()
-                        : DataBindingUtil.inflate(getLayoutInflater(),R.layout.activity_overview_listitem_view,null,false));
+                ActivityOverviewListitemViewBinding itemBinding = (existingListitemView != null
+                        ? (ActivityOverviewListitemViewBinding) existingListitemView.getTag()
+                        : DataBindingUtil.inflate(getLayoutInflater(), R.layout.activity_overview_listitem_view, null, false));
 
                 itemBinding.setItem(item);
                 //the view in which the data is shown
-                View itemView=itemBinding.getRoot();
+                View itemView = itemBinding.getRoot();
                 itemView.setTag(itemBinding);
                 return itemView;
 
@@ -106,6 +108,7 @@ public class OverviewActivity extends AppCompatActivity {
 //        listView.addView(listItemView);
 //        listItemView.setOnClickListener(v -> onListItemSelected(((TextView) v).getText().toString()));
         listviewAdapter.add(item);
+        listView.setSelection(listviewAdapter.getPosition(item));
     }
 
     private void onListItemSelected(TodoItem item) {
