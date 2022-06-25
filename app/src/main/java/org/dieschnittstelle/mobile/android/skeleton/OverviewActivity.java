@@ -92,7 +92,7 @@ public class OverviewActivity extends AppCompatActivity {
                     Log.i(LOGGER, "ResultCode: " + result.getResultCode());
                     Log.i(LOGGER, "Data: " + result.getData());
                     if (result.getResultCode() == Activity.RESULT_OK) {
-                        long itemId =result.getData().getLongExtra(DetailviewActivity.ARG_ITEM_ID,-1);
+                        long itemId = result.getData() != null ? result.getData().getLongExtra(DetailviewActivity.ARG_ITEM_ID, -1) : 0;
                         TodoItem item=crudOperations.readToDoItem(itemId);
                         addListItemView(item);
                     }

@@ -9,7 +9,7 @@ import java.util.Map;
 public class SimpleToDoItemCRUDOperations implements IToDoItemCRUDOperations {
     private static SimpleToDoItemCRUDOperations instance;
     private long idCount = 0;
-    private Map<Long, TodoItem> itemMap = new HashMap<>();
+    private final Map<Long, TodoItem> itemMap = new HashMap<>();
 
     public static SimpleToDoItemCRUDOperations getInstance() {
         if (instance == null) {

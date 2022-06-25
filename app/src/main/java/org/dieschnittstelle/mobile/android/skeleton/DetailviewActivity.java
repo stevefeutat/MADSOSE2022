@@ -8,8 +8,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
 import org.dieschnittstelle.mobile.android.skeleton.databinding.ActivityListitemDetailviewBinding;
 import org.dieschnittstelle.mobile.android.skeleton.model.DetailviewViewModel;
 import org.dieschnittstelle.mobile.android.skeleton.model.IToDoItemCRUDOperations;
