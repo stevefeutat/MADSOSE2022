@@ -17,10 +17,12 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import org.dieschnittstelle.mobile.android.skeleton.databinding.ActivityOverviewListitemViewBinding;
 import org.dieschnittstelle.mobile.android.skeleton.model.TodoItem;
 
 import java.util.ArrayList;
@@ -68,17 +70,9 @@ public class OverviewActivity extends AppCompatActivity {
             public View getView(int position, @Nullable View existingListitemView, @NonNull ViewGroup parent) {
                 //1.take the data to be shown
                 TodoItem item = super.getItem(position);
-                //2.1 create the view to show the data
-                ViewGroup itemView = (ViewGroup) (existingListitemView != null
-                        ? existingListitemView
-                        : getLayoutInflater().inflate(R.layout.activity_overview_listitem_view, null));
-                //2.2 read out the single view elements that would be used to show the data
-                TextView itemNameText = itemView.findViewById(R.id.itemName);
-                CheckBox itemCheckedCheckbox = itemView.findViewById(R.id.itemChecked);
-                //3. bind the view to the data elements
-                itemNameText.setText(item.getName());
-                itemCheckedCheckbox.setChecked(item.isChecked());
-                return itemView;
+                ActivityOverviewListitemViewBinding itemBinding= DataBindingUtil.inflate(getLayoutInflater(),R.layout.activity_overview_listitem_view,null,false);
+                itemBinding.setItem(item);
+                return itemBinding.getRoot();
 
             }
         };
