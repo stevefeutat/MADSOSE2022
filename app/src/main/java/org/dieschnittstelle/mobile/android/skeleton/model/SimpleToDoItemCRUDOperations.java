@@ -13,7 +13,7 @@ public class SimpleToDoItemCRUDOperations implements IToDoItemCRUDOperations {
 
     public static SimpleToDoItemCRUDOperations getInstance() {
         if (instance == null) {
-            instance= new SimpleToDoItemCRUDOperations();
+            instance = new SimpleToDoItemCRUDOperations();
         }
         return instance;
     }
@@ -34,6 +34,10 @@ public class SimpleToDoItemCRUDOperations implements IToDoItemCRUDOperations {
 
     @Override
     public List<TodoItem> readAllToDoItem() {
+        try {
+            Thread.sleep(5000);
+        } catch (Exception e) {
+        }
         return new ArrayList<>(itemMap.values());
     }
 

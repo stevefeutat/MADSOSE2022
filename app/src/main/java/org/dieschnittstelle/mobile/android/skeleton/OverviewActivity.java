@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -36,12 +37,14 @@ public class OverviewActivity extends AppCompatActivity {
     private FloatingActionButton addNewItemButton;
     private IToDoItemCRUDOperations crudOperations;
     private ActivityResultLauncher<Intent> detailviewForNewItemActivityLauncher;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         listView = findViewById(R.id.listView);
+        progressBar = findViewById(R.id.progressBar);
         listviewAdapter = initialiseListviewAdapter();
         listView.setAdapter(listviewAdapter);
         listView.setOnItemClickListener(
@@ -57,8 +60,16 @@ public class OverviewActivity extends AppCompatActivity {
             onAddNewItem();
         });
         crudOperations = SimpleToDoItemCRUDOperations.getInstance();
-        crudOperations.readAllToDoItem().forEach(item ->
-                this.addListItemView(item));
+        progressBar.setVisibility(View.VISIBLE);
+        new Thread(()->{
+            List<TodoItem>items=crudOperations.readAllToDoItem();
+            runOnUiThread(()->{items.forEach(
+                    item -> this.addListItemView(item));
+                progressBar.setVisibility(View.GONE);
+            });
+        }).start();
+//        crudOperations.readAllToDoItem().forEach(item -> this.addListItemView(item));
+
     }
 
     @NonNull
@@ -93,7 +104,7 @@ public class OverviewActivity extends AppCompatActivity {
                     Log.i(LOGGER, "Data: " + result.getData());
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         long itemId = result.getData() != null ? result.getData().getLongExtra(DetailviewActivity.ARG_ITEM_ID, -1) : 0;
-                        TodoItem item=crudOperations.readToDoItem(itemId);
+                        TodoItem item = crudOperations.readToDoItem(itemId);
                         addListItemView(item);
                     }
 
