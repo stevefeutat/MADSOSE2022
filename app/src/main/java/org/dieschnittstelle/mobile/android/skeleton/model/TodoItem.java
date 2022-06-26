@@ -1,8 +1,10 @@
 package org.dieschnittstelle.mobile.android.skeleton.model;
 
+import androidx.room.Entity;
+
 import java.io.Serializable;
 import java.util.Objects;
-
+@Entity
 public class TodoItem implements Serializable {
     private String name;
     private String description;

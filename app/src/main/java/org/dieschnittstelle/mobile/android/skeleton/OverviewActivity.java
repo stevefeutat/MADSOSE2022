@@ -108,9 +108,9 @@ public class OverviewActivity extends AppCompatActivity {
                         this.operationRunner.run(() -> crudOperations.readToDoItem(itemId),
                                 item -> {
                                     if (result.getResultCode() == DetailviewActivity.STATUS_CREATED) {
-                                        onDataItemCreated(item);
+                                        onToDoItemCreated(item);
                                     } else if (result.getResultCode() == DetailviewActivity.STATUS_UPDATED) {
-                                        onDataItemUpdated(item);
+                                        onToDoItemUpdated(item);
                                     }
                                 });
                     }
@@ -118,11 +118,11 @@ public class OverviewActivity extends AppCompatActivity {
                 });
     }
 
-    private void onDataItemCreated(TodoItem item) {
+    private void onToDoItemCreated(TodoItem item) {
         this.addListItemView(item);
     }
 
-    private void onDataItemUpdated(TodoItem item) {
+    private void onToDoItemUpdated(TodoItem item) {
         this.listviewAdapter.notifyDataSetChanged();
     }
 
