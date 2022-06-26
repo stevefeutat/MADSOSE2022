@@ -3,14 +3,19 @@ package org.dieschnittstelle.mobile.android.skeleton.model;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.util.Objects;
+
 @Entity
 public class TodoItem implements Serializable {
     @PrimaryKey(autoGenerate = true)
     private long id;
     private String name;
     private String description;
+
+    @SerializedName("done")
     private boolean checked;
 
     public TodoItem() {
@@ -69,11 +74,11 @@ public class TodoItem implements Serializable {
     @Override
     public String toString() {
         return "ToDoItem:{"
-                +"id="+id
-                +",name=" +name
-                +",description=" +description
-                +",checked=" +checked
-                +",super.toString=" +super.toString()
-                +"}";
+                + "id=" + id
+                + ",name=" + name
+                + ",description=" + description
+                + ",checked=" + checked
+                + ",super.toString=" + super.toString()
+                + "}";
     }
 }
