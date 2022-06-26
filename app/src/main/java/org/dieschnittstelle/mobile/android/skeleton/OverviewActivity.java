@@ -1,6 +1,5 @@
 package org.dieschnittstelle.mobile.android.skeleton;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -37,7 +36,7 @@ public class OverviewActivity extends AppCompatActivity {
     private final List<TodoItem> listviewItems = new ArrayList<>();
     private FloatingActionButton addNewItemButton;
     private IToDoItemCRUDOperations crudOperations;
-    private ActivityResultLauncher<Intent> detailviewForNewItemActivityLauncher;
+    private ActivityResultLauncher<Intent> detailviewActivityLauncher;
     private ProgressBar progressBar;
     private MADAsyncOperationRunner operationRunner;
 
@@ -96,18 +95,35 @@ public class OverviewActivity extends AppCompatActivity {
 
     private void initialiseActivityResultLaunchers() {
 
-        detailviewForNewItemActivityLauncher = registerForActivityResult(
+        detailviewActivityLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 (result) -> {
                     Log.i(LOGGER, "ResultCode: " + result.getResultCode());
                     Log.i(LOGGER, "Data: " + result.getData());
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        long itemId = result.getData() != null ? result.getData().getLongExtra(DetailviewActivity.ARG_ITEM_ID, -1) : 0;
-                       this.operationRunner.run(()->crudOperations.readToDoItem(itemId),
-                               item -> this.addListItemView(item));
+                    if (result.getResultCode() == DetailviewActivity.STATUS_CREATED
+                            || result.getResultCode() == DetailviewActivity.STATUS_UPDATED) {
+                        long itemId = result.getData() != null ?
+                                result.getData().getLongExtra(DetailviewActivity.ARG_ITEM_ID, -1)
+                                : 0;
+                        this.operationRunner.run(() -> crudOperations.readToDoItem(itemId),
+                                item -> {
+                                    if (result.getResultCode() == DetailviewActivity.STATUS_CREATED) {
+                                        onDataItemCreated(item);
+                                    } else if (result.getResultCode() == DetailviewActivity.STATUS_UPDATED) {
+                                        onDataItemUpdated(item);
+                                    }
+                                });
                     }
 
                 });
+    }
+
+    private void onDataItemCreated(TodoItem item) {
+        this.addListItemView(item);
+    }
+
+    private void onDataItemUpdated(TodoItem item) {
+        this.listviewAdapter.notifyDataSetChanged();
     }
 
     private void addListItemView(TodoItem item) {
@@ -118,12 +134,12 @@ public class OverviewActivity extends AppCompatActivity {
     private void onListItemSelected(TodoItem item) {
         Intent detailViewIntent = new Intent(this, DetailviewActivity.class);
         detailViewIntent.putExtra(DetailviewActivity.ARG_ITEM_ID, item.getId());
-        startActivity(detailViewIntent);
+        detailviewActivityLauncher.launch(detailViewIntent);
     }
 
     private void onAddNewItem() {
         Intent detailViewIntentForAddNewItem = new Intent(this, DetailviewActivity.class);
-        detailviewForNewItemActivityLauncher.launch(detailViewIntentForAddNewItem);
+        detailviewActivityLauncher.launch(detailViewIntentForAddNewItem);
     }
 
     private void showMessage(String msg) {
