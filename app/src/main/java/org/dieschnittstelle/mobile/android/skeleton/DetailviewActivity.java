@@ -13,21 +13,32 @@ import org.dieschnittstelle.mobile.android.skeleton.model.DetailviewViewModel;
 import org.dieschnittstelle.mobile.android.skeleton.model.IToDoItemCRUDOperations;
 import org.dieschnittstelle.mobile.android.skeleton.model.SimpleToDoItemCRUDOperations;
 import org.dieschnittstelle.mobile.android.skeleton.model.TodoItem;
+import org.dieschnittstelle.mobile.android.skeleton.util.MADAsyncOperationRunner;
 
 public class DetailviewActivity extends AppCompatActivity implements DetailviewViewModel {
     public static String ARG_ITEM_ID = "itemId";
     private TodoItem item;
     private ActivityListitemDetailviewBinding binding;
     private IToDoItemCRUDOperations crudOperations;
+    private MADAsyncOperationRunner operationRunner;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.binding = DataBindingUtil.setContentView(this, R.layout.activity_listitem_detailview);
         this.crudOperations = SimpleToDoItemCRUDOperations.getInstance();
+
+        this.operationRunner = new MADAsyncOperationRunner(this, null);
+
         long itemId = getIntent().getLongExtra(ARG_ITEM_ID, -1);
         if (itemId != -1) {
-            this.item = this.crudOperations.readToDoItem(itemId);
+            operationRunner.run(() -> this.crudOperations.readToDoItem(itemId),
+                    item -> {
+                        this.item = item;
+                        this.binding.setViewModel(this);
+                    }
+            );
+//            this.item = this.crudOperations.readToDoItem(itemId);
         }
         if (this.item == null) {
             this.item = new TodoItem();

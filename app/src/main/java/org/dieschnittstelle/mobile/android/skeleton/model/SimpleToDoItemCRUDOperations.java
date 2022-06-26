@@ -35,7 +35,7 @@ public class SimpleToDoItemCRUDOperations implements IToDoItemCRUDOperations {
     @Override
     public List<TodoItem> readAllToDoItem() {
         try {
-            Thread.sleep(5000);
+            Thread.sleep(2000);
         } catch (Exception e) {
         }
         return new ArrayList<>(itemMap.values());
@@ -43,6 +43,10 @@ public class SimpleToDoItemCRUDOperations implements IToDoItemCRUDOperations {
 
     @Override
     public TodoItem readToDoItem(long id) {
+        try {
+            Thread.sleep(2000);
+        } catch (Exception e) {
+        }
         return itemMap.get(id);
     }
 
