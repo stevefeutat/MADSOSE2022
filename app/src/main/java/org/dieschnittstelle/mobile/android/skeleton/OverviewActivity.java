@@ -22,6 +22,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import org.dieschnittstelle.mobile.android.skeleton.databinding.ActivityOverviewListitemViewBinding;
 import org.dieschnittstelle.mobile.android.skeleton.model.IToDoItemCRUDOperations;
+import org.dieschnittstelle.mobile.android.skeleton.model.RoomLocalToDoItemCRUDOperations;
 import org.dieschnittstelle.mobile.android.skeleton.model.SimpleToDoItemCRUDOperations;
 import org.dieschnittstelle.mobile.android.skeleton.model.TodoItem;
 import org.dieschnittstelle.mobile.android.skeleton.util.MADAsyncOperationRunner;
@@ -61,7 +62,7 @@ public class OverviewActivity extends AppCompatActivity {
         addNewItemButton.setOnClickListener(v -> {
             onAddNewItem();
         });
-        crudOperations = SimpleToDoItemCRUDOperations.getInstance();
+        crudOperations = new RoomLocalToDoItemCRUDOperations(this.getApplicationContext());//SimpleToDoItemCRUDOperations.getInstance();
         operationRunner.run(
                 () -> crudOperations.readAllToDoItem(),
                 items -> {
@@ -123,6 +124,10 @@ public class OverviewActivity extends AppCompatActivity {
     }
 
     private void onToDoItemUpdated(TodoItem item) {
+        TodoItem itemToBeUpdated = this.listviewAdapter.getItem(this.listviewAdapter.getPosition(item));
+        itemToBeUpdated.setName(item.getName());
+        itemToBeUpdated.setDescription(item.getDescription());
+        itemToBeUpdated.setChecked(item.isChecked());
         this.listviewAdapter.notifyDataSetChanged();
     }
 

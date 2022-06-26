@@ -11,6 +11,7 @@ import androidx.databinding.DataBindingUtil;
 import org.dieschnittstelle.mobile.android.skeleton.databinding.ActivityListitemDetailviewBinding;
 import org.dieschnittstelle.mobile.android.skeleton.model.DetailviewViewModel;
 import org.dieschnittstelle.mobile.android.skeleton.model.IToDoItemCRUDOperations;
+import org.dieschnittstelle.mobile.android.skeleton.model.RoomLocalToDoItemCRUDOperations;
 import org.dieschnittstelle.mobile.android.skeleton.model.SimpleToDoItemCRUDOperations;
 import org.dieschnittstelle.mobile.android.skeleton.model.TodoItem;
 import org.dieschnittstelle.mobile.android.skeleton.util.MADAsyncOperationRunner;
@@ -29,7 +30,7 @@ public class DetailviewActivity extends AppCompatActivity implements DetailviewV
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.binding = DataBindingUtil.setContentView(this, R.layout.activity_listitem_detailview);
-        this.crudOperations = SimpleToDoItemCRUDOperations.getInstance();
+        this.crudOperations = new RoomLocalToDoItemCRUDOperations(this.getApplicationContext());//SimpleToDoItemCRUDOperations.getInstance();
 
         this.operationRunner = new MADAsyncOperationRunner(this, null);
 
@@ -54,9 +55,9 @@ public class DetailviewActivity extends AppCompatActivity implements DetailviewV
 
     public void onSaveItem() {
         Intent returnIntent = new Intent();
-        int resultCode = item.getId() >= 0 ? STATUS_UPDATED : STATUS_CREATED;
+        int resultCode = item.getId() > 0 ? STATUS_UPDATED : STATUS_CREATED;
         operationRunner.run(() ->
-                        item.getId() >= 0
+                        item.getId() > 0
                                 ? crudOperations.updateToDoItem(item)
                                 : crudOperations.createToDoItem(item),
                 item -> {
