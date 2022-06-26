@@ -68,14 +68,6 @@ public class OverviewActivity extends AppCompatActivity {
                 items -> {
                     items.forEach(item -> this.addListItemView(item));
                 });
-//        progressBar.setVisibility(View.VISIBLE);
-//        new Thread(()->{
-//            List<TodoItem>items=crudOperations.readAllToDoItem();
-//            runOnUiThread(()->{items.forEach(
-//                    item -> this.addListItemView(item));
-//                progressBar.setVisibility(View.GONE);
-//            });
-//        }).start();
 
     }
 
@@ -111,8 +103,8 @@ public class OverviewActivity extends AppCompatActivity {
                     Log.i(LOGGER, "Data: " + result.getData());
                     if (result.getResultCode() == Activity.RESULT_OK) {
                         long itemId = result.getData() != null ? result.getData().getLongExtra(DetailviewActivity.ARG_ITEM_ID, -1) : 0;
-                        TodoItem item = crudOperations.readToDoItem(itemId);
-                        addListItemView(item);
+                       this.operationRunner.run(()->crudOperations.readToDoItem(itemId),
+                               item -> this.addListItemView(item));
                     }
 
                 });
