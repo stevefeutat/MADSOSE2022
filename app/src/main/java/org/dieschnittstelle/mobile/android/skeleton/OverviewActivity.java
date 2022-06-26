@@ -3,6 +3,8 @@ package org.dieschnittstelle.mobile.android.skeleton;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -29,6 +31,7 @@ import org.dieschnittstelle.mobile.android.skeleton.model.TodoItem;
 import org.dieschnittstelle.mobile.android.skeleton.util.MADAsyncOperationRunner;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class OverviewActivity extends AppCompatActivity {
@@ -150,5 +153,31 @@ public class OverviewActivity extends AppCompatActivity {
 
     private void showMessage(String msg) {
         Snackbar.make(listView, msg, Snackbar.LENGTH_INDEFINITE).show();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.overview_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.sortList) {
+//            showMessage("Sort");
+            sortItemsByName();
+            return true;
+        } else if (item.getItemId() == R.id.deleteAllItemsLocally) {
+            showMessage("Delete");
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
+        }
+
+    }
+
+    public void sortItemsByName() {
+        this.listviewItems.sort(Comparator.comparing(TodoItem::getName));
+        this.listviewAdapter.notifyDataSetChanged();
     }
 }
