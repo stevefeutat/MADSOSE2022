@@ -4,7 +4,6 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 import android.app.Activity;
-import android.view.View;
 import android.widget.ProgressBar;
 
 import java.util.function.Consumer;
