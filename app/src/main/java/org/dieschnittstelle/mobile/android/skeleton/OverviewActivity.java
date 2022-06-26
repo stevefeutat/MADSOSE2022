@@ -22,6 +22,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import org.dieschnittstelle.mobile.android.skeleton.databinding.ActivityOverviewListitemViewBinding;
 import org.dieschnittstelle.mobile.android.skeleton.model.IToDoItemCRUDOperations;
+import org.dieschnittstelle.mobile.android.skeleton.model.RetrofitRemoteToDoItemCRUDOperations;
 import org.dieschnittstelle.mobile.android.skeleton.model.RoomLocalToDoItemCRUDOperations;
 import org.dieschnittstelle.mobile.android.skeleton.model.SimpleToDoItemCRUDOperations;
 import org.dieschnittstelle.mobile.android.skeleton.model.TodoItem;
@@ -62,7 +63,7 @@ public class OverviewActivity extends AppCompatActivity {
         addNewItemButton.setOnClickListener(v -> {
             onAddNewItem();
         });
-        crudOperations = new RoomLocalToDoItemCRUDOperations(this.getApplicationContext());//SimpleToDoItemCRUDOperations.getInstance();
+        crudOperations = new RetrofitRemoteToDoItemCRUDOperations();//new RoomLocalToDoItemCRUDOperations(this.getApplicationContext());//SimpleToDoItemCRUDOperations.getInstance();
         operationRunner.run(
                 () -> crudOperations.readAllToDoItem(),
                 items -> {
