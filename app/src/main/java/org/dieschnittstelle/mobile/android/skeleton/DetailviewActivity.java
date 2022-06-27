@@ -27,7 +27,8 @@ public class DetailviewActivity extends AppCompatActivity implements DetailviewV
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.binding = DataBindingUtil.setContentView(this, R.layout.activity_listitem_detailview);
-        this.crudOperations = new RetrofitRemoteToDoItemCRUDOperations();//new RoomLocalToDoItemCRUDOperations(this.getApplicationContext());//SimpleToDoItemCRUDOperations.getInstance();
+        this.crudOperations = ((ToDoItemApplication) getApplication()).getCrudOperations();
+        //new RetrofitRemoteToDoItemCRUDOperations();//new RoomLocalToDoItemCRUDOperations(this.getApplicationContext());//SimpleToDoItemCRUDOperations.getInstance();
 
         this.operationRunner = new MADAsyncOperationRunner(this, null);
 

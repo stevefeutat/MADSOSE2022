@@ -70,7 +70,7 @@ public class OverviewActivity extends AppCompatActivity {
         addNewItemButton.setOnClickListener(v -> {
             onAddNewItem();
         });
-        crudOperations = new RetrofitRemoteToDoItemCRUDOperations();//new RoomLocalToDoItemCRUDOperations(this.getApplicationContext());//SimpleToDoItemCRUDOperations.getInstance();
+        crudOperations = ((ToDoItemApplication) getApplication()).getCrudOperations();
         operationRunner.run(
                 () -> crudOperations.readAllToDoItem(),
                 items -> {
@@ -191,10 +191,10 @@ public class OverviewActivity extends AppCompatActivity {
     }
 
     public void onCheckedChangedInListview(TodoItem item) {
-        this.operationRunner.run(() -> crudOperations.updateToDoItem(item),updatedItem->{
+        this.operationRunner.run(() -> crudOperations.updateToDoItem(item), updatedItem -> {
             this.sortItemsByName();
             showMessage("item.isChecked()=" + item.isChecked());
-        } );
+        });
 
     }
 }
