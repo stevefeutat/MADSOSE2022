@@ -1,6 +1,5 @@
 package org.dieschnittstelle.mobile.android.skeleton;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -9,11 +8,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
 import org.dieschnittstelle.mobile.android.skeleton.databinding.ActivityListitemDetailviewBinding;
-import org.dieschnittstelle.mobile.android.skeleton.model.DetailviewViewModel;
 import org.dieschnittstelle.mobile.android.skeleton.model.IToDoItemCRUDOperations;
 import org.dieschnittstelle.mobile.android.skeleton.model.RetrofitRemoteToDoItemCRUDOperations;
-import org.dieschnittstelle.mobile.android.skeleton.model.RoomLocalToDoItemCRUDOperations;
-import org.dieschnittstelle.mobile.android.skeleton.model.SimpleToDoItemCRUDOperations;
 import org.dieschnittstelle.mobile.android.skeleton.model.TodoItem;
 import org.dieschnittstelle.mobile.android.skeleton.util.MADAsyncOperationRunner;
 
