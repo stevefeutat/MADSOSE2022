@@ -36,6 +36,9 @@ import java.util.List;
 
 public class OverviewActivity extends AppCompatActivity {
     public static final String LOGGER = "OverviewActivity";
+    public static final Comparator<TodoItem> NAME_COMPARATOR = Comparator.comparing(TodoItem::getName);
+    public static final Comparator<TodoItem> CHECKED_AND_NAME_COMPARATOR = Comparator.comparing(TodoItem::isChecked).reversed().thenComparing(TodoItem::getName);
+
     private ListView listView;
     private ArrayAdapter<TodoItem> listviewAdapter;
     private final List<TodoItem> listviewItems = new ArrayList<>();
@@ -44,6 +47,7 @@ public class OverviewActivity extends AppCompatActivity {
     private ActivityResultLauncher<Intent> detailviewActivityLauncher;
     private ProgressBar progressBar;
     private MADAsyncOperationRunner operationRunner;
+    private Comparator<TodoItem> currentComparator = NAME_COMPARATOR;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +75,7 @@ public class OverviewActivity extends AppCompatActivity {
                 () -> crudOperations.readAllToDoItem(),
                 items -> {
                     items.forEach(item -> this.addListItemView(item));
+                    sortItemsByName();
                 });
 
     }
@@ -125,6 +130,7 @@ public class OverviewActivity extends AppCompatActivity {
 
     private void onToDoItemCreated(TodoItem item) {
         this.addListItemView(item);
+        sortItemsByName();
     }
 
     private void onToDoItemUpdated(TodoItem item) {
@@ -132,7 +138,8 @@ public class OverviewActivity extends AppCompatActivity {
         itemToBeUpdated.setName(item.getName());
         itemToBeUpdated.setDescription(item.getDescription());
         itemToBeUpdated.setChecked(item.isChecked());
-        this.listviewAdapter.notifyDataSetChanged();
+//        this.listviewAdapter.notifyDataSetChanged();
+        sortItemsByName();
     }
 
     private void addListItemView(TodoItem item) {
@@ -165,6 +172,7 @@ public class OverviewActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.sortList) {
 //            showMessage("Sort");
+            this.currentComparator = CHECKED_AND_NAME_COMPARATOR;
             sortItemsByName();
             return true;
         } else if (item.getItemId() == R.id.deleteAllItemsLocally) {
@@ -177,7 +185,7 @@ public class OverviewActivity extends AppCompatActivity {
     }
 
     public void sortItemsByName() {
-        this.listviewItems.sort(Comparator.comparing(TodoItem::getName));
+        this.listviewItems.sort(this.currentComparator);
         this.listviewAdapter.notifyDataSetChanged();
     }
 }
