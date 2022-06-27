@@ -7,31 +7,36 @@
         <variable
             name="item"
             type="org.dieschnittstelle.mobile.android.skeleton.model.TodoItem" />
+
+        <variable
+            name="controller"
+            type="org.dieschnittstelle.mobile.android.skeleton.OverviewActivity" />
     </data>
 
-<LinearLayout
+    <LinearLayout
 
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal">
-
-    <CheckBox
-        android:id="@+id/itemChecked"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:checked="@={item.checked}"
-        android:focusable="false"></CheckBox>
-
-    <TextView
-        android:id="@+id/itemName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp"
-        android:text="@{item.name}"
-        android:textColor="@color/textColor"
-        android:textSize="30sp">
+        android:orientation="horizontal">
 
-    </TextView>
-</LinearLayout>
+        <CheckBox
+            android:id="@+id/itemChecked"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:checked="@={item.checked}"
+            android:focusable="false"
+            android:onClick="@{()->controller.onCheckedChangedInListview(item)}"></CheckBox>
+
+        <TextView
+            android:id="@+id/itemName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="@{item.name}"
+            android:textColor="@color/textColor"
+            android:textSize="30sp">
+
+        </TextView>
+    </LinearLayout>
 </layout>

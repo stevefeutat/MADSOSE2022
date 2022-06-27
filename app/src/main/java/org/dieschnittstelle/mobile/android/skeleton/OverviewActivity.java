@@ -94,6 +94,7 @@ public class OverviewActivity extends AppCompatActivity {
                         : DataBindingUtil.inflate(getLayoutInflater(), R.layout.activity_overview_listitem_view, null, false));
 
                 itemBinding.setItem(item);
+                itemBinding.setController(OverviewActivity.this);
                 //the view in which the data is shown
                 View itemView = itemBinding.getRoot();
                 itemView.setTag(itemBinding);
@@ -171,7 +172,7 @@ public class OverviewActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.sortList) {
-//            showMessage("Sort");
+
             this.currentComparator = CHECKED_AND_NAME_COMPARATOR;
             sortItemsByName();
             return true;
@@ -187,5 +188,13 @@ public class OverviewActivity extends AppCompatActivity {
     public void sortItemsByName() {
         this.listviewItems.sort(this.currentComparator);
         this.listviewAdapter.notifyDataSetChanged();
+    }
+
+    public void onCheckedChangedInListview(TodoItem item) {
+        this.operationRunner.run(() -> crudOperations.updateToDoItem(item),updatedItem->{
+            this.sortItemsByName();
+            showMessage("item.isChecked()=" + item.isChecked());
+        } );
+
     }
 }
