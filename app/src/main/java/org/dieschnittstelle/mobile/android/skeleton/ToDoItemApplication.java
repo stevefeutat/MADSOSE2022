@@ -4,6 +4,7 @@ import android.app.Application;
 import android.util.Log;
 import android.widget.Toast;
 
+import org.dieschnittstelle.mobile.android.skeleton.model.CachedToDoItemCRUDOperations;
 import org.dieschnittstelle.mobile.android.skeleton.model.IToDoItemCRUDOperations;
 import org.dieschnittstelle.mobile.android.skeleton.model.RetrofitRemoteToDoItemCRUDOperations;
 import org.dieschnittstelle.mobile.android.skeleton.model.RoomLocalToDoItemCRUDOperations;
@@ -23,12 +24,13 @@ public class ToDoItemApplication extends Application {
         super.onCreate();
         try {
             if (checkConnectivity().get()) {
-                this.crudOperations = new SyncedToDoItemCRUDOperations(
+                IToDoItemCRUDOperations operations = new SyncedToDoItemCRUDOperations(
                         new RoomLocalToDoItemCRUDOperations(this),
                         new RetrofitRemoteToDoItemCRUDOperations());
                 Toast.makeText(this, "Using Synced data access ...", Toast.LENGTH_SHORT).show();
+                this.crudOperations = new CachedToDoItemCRUDOperations(operations);
             } else {
-                this.crudOperations = new RoomLocalToDoItemCRUDOperations(this);
+                this.crudOperations = new CachedToDoItemCRUDOperations(new RoomLocalToDoItemCRUDOperations(this));
                 Toast.makeText(this, "Using local data access ...", Toast.LENGTH_SHORT).show();
             }
         } catch (Exception e) {
