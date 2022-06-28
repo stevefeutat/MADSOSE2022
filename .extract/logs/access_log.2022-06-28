@@ -1,0 +1,8 @@
+127.0.0.1 - - [28/Jun/2022:20:44:07 +0200] GET /api/todos HTTP/1.1 200 815 http-bio-8080-exec-1 523
+0:0:0:0:0:0:0:1 - - [28/Jun/2022:20:44:59 +0200] GET /api/todos HTTP/1.1 200 815 http-bio-8080-exec-3 25
+0:0:0:0:0:0:0:1 - - [28/Jun/2022:20:45:00 +0200] GET /favicon.ico HTTP/1.1 404 973 http-bio-8080-exec-5 14
+127.0.0.1 - - [28/Jun/2022:20:51:56 +0200] GET /api/todos HTTP/1.1 200 815 http-bio-8080-exec-1 677
+127.0.0.1 - - [28/Jun/2022:20:54:31 +0200] GET /api/todos HTTP/1.1 200 815 http-bio-8080-exec-3 157
+127.0.0.1 - - [28/Jun/2022:20:55:02 +0200] GET /api/todos HTTP/1.1 200 815 http-bio-8080-exec-5 52
+127.0.0.1 - - [28/Jun/2022:20:55:24 +0200] GET /api/todos HTTP/1.1 200 815 http-bio-8080-exec-7 3
+127.0.0.1 - - [28/Jun/2022:21:11:35 +0200] GET /api/todos HTTP/1.1 200 815 http-bio-8080-exec-1 527

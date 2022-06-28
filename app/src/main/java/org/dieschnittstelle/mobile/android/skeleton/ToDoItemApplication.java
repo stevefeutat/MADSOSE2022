@@ -2,10 +2,12 @@ package org.dieschnittstelle.mobile.android.skeleton;
 
 import android.app.Application;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.dieschnittstelle.mobile.android.skeleton.model.IToDoItemCRUDOperations;
 import org.dieschnittstelle.mobile.android.skeleton.model.RetrofitRemoteToDoItemCRUDOperations;
 import org.dieschnittstelle.mobile.android.skeleton.model.RoomLocalToDoItemCRUDOperations;
+import org.dieschnittstelle.mobile.android.skeleton.model.SyncedToDoItemCRUDOperations;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -21,9 +23,13 @@ public class ToDoItemApplication extends Application {
         super.onCreate();
         try {
             if (checkConnectivity().get()) {
-                this.crudOperations = new RetrofitRemoteToDoItemCRUDOperations();
+                this.crudOperations = new SyncedToDoItemCRUDOperations(
+                        new RoomLocalToDoItemCRUDOperations(this),
+                        new RetrofitRemoteToDoItemCRUDOperations());
+                Toast.makeText(this, "Using Synced data access ...", Toast.LENGTH_SHORT).show();
             } else {
                 this.crudOperations = new RoomLocalToDoItemCRUDOperations(this);
+                Toast.makeText(this, "Using local data access ...", Toast.LENGTH_SHORT).show();
             }
         } catch (Exception e) {
             throw new RuntimeException("Got exception trying to get future boolean for connectivity");

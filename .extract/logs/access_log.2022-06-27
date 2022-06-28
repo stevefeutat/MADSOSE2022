@@ -68,3 +68,5 @@
 127.0.0.1 - - [27/Jun/2022:21:41:17 +0200] PUT /api/todos/3 HTTP/1.1 200 113 http-bio-8080-exec-4 4
 127.0.0.1 - - [27/Jun/2022:21:41:22 +0200] PUT /api/todos/4 HTTP/1.1 200 112 http-bio-8080-exec-4 3
 127.0.0.1 - - [27/Jun/2022:21:41:33 +0200] PUT /api/todos/2 HTTP/1.1 200 115 http-bio-8080-exec-4 2
+127.0.0.1 - - [27/Jun/2022:22:05:39 +0200] GET /api/todos HTTP/1.1 200 815 http-bio-8080-exec-1 976
+0:0:0:0:0:0:0:1 - - [27/Jun/2022:22:46:28 +0200] GET /api/todos HTTP/1.1 200 815 http-bio-8080-exec-3 212
