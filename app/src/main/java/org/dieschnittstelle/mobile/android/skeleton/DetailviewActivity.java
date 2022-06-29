@@ -2,6 +2,11 @@ package org.dieschnittstelle.mobile.android.skeleton;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,6 +27,7 @@ public class DetailviewActivity extends AppCompatActivity implements DetailviewV
     private ActivityListitemDetailviewBinding binding;
     private IToDoItemCRUDOperations crudOperations;
     private MADAsyncOperationRunner operationRunner;
+    private String errorStatus;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -68,4 +74,35 @@ public class DetailviewActivity extends AppCompatActivity implements DetailviewV
 
 
     }
+
+    @Override
+    public String getErrorStatus() {
+        return errorStatus;
+    }
+
+    @Override
+    public boolean onNameInputChanged() {
+        if (this.errorStatus != null) {
+            this.errorStatus = null;
+            this.binding.setViewModel(this);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean checkFieldInputComplete(View view, int actionId, boolean hasFocus, boolean isCalledFromOnFocusChange) {
+
+//        Log.i("LOGGER", "checkFielInputComplete");
+        if (isCalledFromOnFocusChange ?
+                !hasFocus
+                : actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT) {
+            if (item.getName().length() < 5) {
+                errorStatus = "name too short";
+                this.binding.setViewModel(this);
+//                Log.i("LOGGER", errorStatus);
+            }
+        }
+        return false;
+    }
+
 }

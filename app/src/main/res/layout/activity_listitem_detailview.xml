@@ -25,7 +25,11 @@
                 android:id="@+id/itemName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:lines="1"
+                android:singleLine="true"
+                android:error="@{viewModel.errorStatus}"
+                android:onTextChanged="@{(a,b,c,d)->viewModel.onNameInputChanged()}"
+                android:onFocusChange="@{(view,hasFocus)->viewModel.checkFieldInputComplete(view,-1,hasFocus,true)}"
+                android:onEditorAction="@{(view,actionId,event)->viewModel.checkFieldInputComplete(view,actionId,false,false)}"
                 android:text="@={viewModel.item.name}"
                 app:layout_constraintTop_toTopOf="parent"></com.google.android.material.textfield.TextInputEditText>
 
