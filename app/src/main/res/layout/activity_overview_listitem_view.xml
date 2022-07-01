@@ -30,13 +30,40 @@
 
         <TextView
             android:id="@+id/itemName"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
             android:padding="10dp"
             android:text="@{item.name}"
             android:textColor="@color/textColor"
             android:textSize="30sp">
 
         </TextView>
+
+        <TextView
+            android:id="@+id/expiryDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:padding="16dp"
+            android:text="@{item.expiryDate}"
+            android:textColor="@color/textColor"
+            android:textSize="30sp">
+
+        </TextView>
+
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/itemIsFavorit"
+            style="@style/checkBoxStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:checked="@={item.favorit}"
+            android:focusable="false"
+            android:onClick="@{()->controller.onCheckedChangedInListview(item)}" />
+
     </LinearLayout>
 </layout>

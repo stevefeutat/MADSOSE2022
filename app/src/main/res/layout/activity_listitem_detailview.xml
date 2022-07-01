@@ -25,13 +25,15 @@
                 android:id="@+id/itemName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:singleLine="true"
                 android:error="@{viewModel.errorStatus}"
-                android:onTextChanged="@{(a,b,c,d)->viewModel.onNameInputChanged()}"
-                android:onFocusChange="@{(view,hasFocus)->viewModel.checkFieldInputComplete(view,-1,hasFocus,true)}"
                 android:onEditorAction="@{(view,actionId,event)->viewModel.checkFieldInputComplete(view,actionId,false,false)}"
+                android:onFocusChange="@{(view,hasFocus)->viewModel.checkFieldInputComplete(view,-1,hasFocus,true)}"
+                android:onTextChanged="@{(a,b,c,d)->viewModel.onNameInputChanged()}"
+                android:singleLine="true"
                 android:text="@={viewModel.item.name}"
-                app:layout_constraintTop_toTopOf="parent"></com.google.android.material.textfield.TextInputEditText>
+                app:layout_constraintTop_toTopOf="parent">
+
+            </com.google.android.material.textfield.TextInputEditText>
 
             <com.google.android.material.checkbox.MaterialCheckBox
                 android:id="@id/itemChecked"
@@ -41,6 +43,8 @@
                 android:text="checked?"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="@id/itemNameWrapper" />
+
+
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -59,7 +63,20 @@
                 android:minLines="5"
                 android:text="@={viewModel.item.description}"
                 app:layout_constraintTop_toBottomOf="@id/itemChecked"></com.google.android.material.textfield.TextInputEditText>
+
+            <com.google.android.material.checkbox.MaterialCheckBox
+                android:id="@id/itemIsFavorit"
+                style="@style/checkBoxStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="@={viewModel.item.favorit}"
+                android:text=" favourit?"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="@id/itemChecked" />
+
+
         </com.google.android.material.textfield.TextInputLayout>
+
 
         <!--        app:srcCompat="@drawable/baseline_save_white_24dp"-->
         <!--    app:srcCompat="@android:drawable/ic_menu_save"-->

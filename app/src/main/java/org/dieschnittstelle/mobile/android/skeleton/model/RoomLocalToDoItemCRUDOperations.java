@@ -30,7 +30,7 @@ public class RoomLocalToDoItemCRUDOperations implements IToDoItemCRUDOperations 
         public void update(TodoItem item);
 
         @Delete
-        public void delete(TodoItem item);
+        public  void delete(TodoItem item);
     }
 
     @Database(entities = {TodoItem.class}, version = 1)

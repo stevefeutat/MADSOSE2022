@@ -17,6 +17,13 @@ public class TodoItem implements Serializable {
 
     @SerializedName("done")
     private boolean checked;
+    @SerializedName("favourite")
+    private boolean isFavorit;
+
+
+
+    @SerializedName("expiry")
+    private String expiryDate;
 
     public TodoItem() {
 
@@ -78,7 +85,22 @@ public class TodoItem implements Serializable {
                 + ",name=" + name
                 + ",description=" + description
                 + ",checked=" + checked
+                + ",isFavorit=" + isFavorit
                 + ",super.toString=" + super.toString()
                 + "}";
+    }
+    public String getExpiryDate() {
+        return expiryDate;
+    }
+
+    public void setExpiryDate(String expiryDate) {
+        this.expiryDate = expiryDate;
+    }
+    public boolean isFavorit() {
+        return isFavorit;
+    }
+
+    public void setFavorit(boolean favorit) {
+        isFavorit = favorit;
     }
 }

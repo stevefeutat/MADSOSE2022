@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/sortList"
-        android:title="SORT"
+        android:title="SORT_ALPHA"
+        android:icon="@drawable/ic_baseline_sort_by_alpha_24"
         app:showAsAction="always" />
     <item
         android:id="@+id/deleteAllItemsLocally"

@@ -1,22 +1,40 @@
 package org.dieschnittstelle.mobile.android.skeleton;
 
+import android.Manifest;
+import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.util.Log;
-import android.view.KeyEvent;
+
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.TextView;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 
 import org.dieschnittstelle.mobile.android.skeleton.databinding.ActivityListitemDetailviewBinding;
 import org.dieschnittstelle.mobile.android.skeleton.model.IToDoItemCRUDOperations;
-import org.dieschnittstelle.mobile.android.skeleton.model.RetrofitRemoteToDoItemCRUDOperations;
 import org.dieschnittstelle.mobile.android.skeleton.model.TodoItem;
 import org.dieschnittstelle.mobile.android.skeleton.util.MADAsyncOperationRunner;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 public class DetailviewActivity extends AppCompatActivity implements DetailviewViewModel {
     public static String ARG_ITEM_ID = "itemId";
@@ -28,14 +46,24 @@ public class DetailviewActivity extends AppCompatActivity implements DetailviewV
     private IToDoItemCRUDOperations crudOperations;
     private MADAsyncOperationRunner operationRunner;
     private String errorStatus;
+    private ActivityResultLauncher<Intent> selectContactLauncher;
+    private Uri latestSelectedContactUri;
+    private static int REQUEST_CONTACT_PERMISSIONS_REQUEST_CODE = 1;
+    private final Calendar myCalendar = Calendar. getInstance () ;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.binding = DataBindingUtil.setContentView(this, R.layout.activity_listitem_detailview);
+        this.selectContactLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK) {
+                        onContactSelected(result.getData());
+                    }
+                }
+        );
         this.crudOperations = ((ToDoItemApplication) getApplication()).getCrudOperations();
-        //new RetrofitRemoteToDoItemCRUDOperations();//new RoomLocalToDoItemCRUDOperations(this.getApplicationContext());//SimpleToDoItemCRUDOperations.getInstance();
-
         this.operationRunner = new MADAsyncOperationRunner(this, null);
 
         long itemId = getIntent().getLongExtra(ARG_ITEM_ID, -1);
@@ -104,5 +132,110 @@ public class DetailviewActivity extends AppCompatActivity implements DetailviewV
         }
         return false;
     }
+    DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet (DatePicker view , int year , int monthOfYear , int dayOfMonth) {
+            myCalendar .set(Calendar. YEAR , year) ;
+            myCalendar .set(Calendar. MONTH , monthOfYear) ;
+            myCalendar .set(Calendar. DAY_OF_MONTH , dayOfMonth) ;
+            updateLabel() ;
+        }
+    } ;
+    private void updateLabel () {
+        String myFormat = "dd/MM/yy" ; //In which you need put here
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat , Locale. getDefault ()) ;
+        Date date = myCalendar .getTime() ;
+//        item.getExpiryDate().s .setText(sdf.format(date)) ;
+//        scheduleNotification(getNotification( btnDate .getText().toString()) , date.getTime()) ;
+    }
+    public void setDate (View view) {
+        new DatePickerDialog(this, date ,
+                myCalendar .get(Calendar. YEAR ) ,
+                myCalendar .get(Calendar. MONTH ) ,
+                myCalendar .get(Calendar. DAY_OF_MONTH )
+        ).show() ;
+    }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.detailview_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.selectContact) {
+            selectContact();
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
+        }
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_CONTACT_PERMISSIONS_REQUEST_CODE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (latestSelectedContactUri != null) {
+                    showContactDetails(latestSelectedContactUri);
+                } else {
+                    Toast.makeText(this, "Cannot continue:no contact", Toast.LENGTH_LONG).show();
+                }
+            } else {
+                Toast.makeText(this, "Contact cannot be accessed", Toast.LENGTH_LONG).show();
+            }
+        } else {
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+
+    }
+
+    private void selectContact() {
+        Log.i("LOGGER", "selectContact");
+        Intent selectedContactIntent =
+                new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+        this.selectContactLauncher.launch(selectedContactIntent);
+    }
+
+    public void onContactSelected(Intent result) {
+
+        Log.i("LOGGER", "onContactSelected" + result);
+        showContactDetails(result.getData());
+    }
+
+    public void showContactDetails(Uri contactUri) {
+        int hasReadContactsPermission = checkSelfPermission(Manifest.permission.READ_CONTACTS);
+        if (hasReadContactsPermission != PackageManager.PERMISSION_GRANTED) {
+            latestSelectedContactUri = contactUri;
+            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS}, REQUEST_CONTACT_PERMISSIONS_REQUEST_CODE);
+            return;
+
+        }
+        Cursor cursor = getContentResolver()
+                .query(contactUri, null, null, null, null);
+        if (cursor.moveToFirst()) {
+            Log.i("LOGGER", "moveToFirst " + cursor);
+            int contactNamePosition = cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME);
+            String contactName = cursor.getString(contactNamePosition);
+            Log.i("LOGGER", "contactName " + contactName);
+            int internalIdPosition = cursor.getColumnIndex(ContactsContract.Contacts._ID);
+            long internalId = cursor.getLong(internalIdPosition);
+            Log.i("LOGGER", "internalId " + internalId);
+            showContactDetailsForInternalId(internalId);
+        }
+    }
+
+    public void showContactDetailsForInternalId(long internalId) {
+        Cursor cursor = getContentResolver()
+                .query(ContactsContract.Contacts.CONTENT_URI, null,
+                        "_id=?", new String[]{String.valueOf(internalId)}, null);
+        if (cursor.moveToFirst()) {
+            int contactDisplayNamePosition = cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME);
+            String displayName = cursor.getString(contactDisplayNamePosition);
+            Log.i("LOGGER", "displayName " + displayName);
+        } else {
+            Toast.makeText(this, "No contact found with internalId", Toast.LENGTH_LONG).show();
+        }
+    }
 }

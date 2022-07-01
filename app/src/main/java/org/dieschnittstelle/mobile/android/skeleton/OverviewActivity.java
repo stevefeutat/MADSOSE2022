@@ -139,6 +139,8 @@ public class OverviewActivity extends AppCompatActivity {
         itemToBeUpdated.setName(item.getName());
         itemToBeUpdated.setDescription(item.getDescription());
         itemToBeUpdated.setChecked(item.isChecked());
+        itemToBeUpdated.setChecked(item.isFavorit());
+        itemToBeUpdated.setExpiryDate(item.getExpiryDate());
 //        this.listviewAdapter.notifyDataSetChanged();
         sortItemsByName();
     }
@@ -177,7 +179,12 @@ public class OverviewActivity extends AppCompatActivity {
             sortItemsByName();
             return true;
         } else if (item.getItemId() == R.id.deleteAllItemsLocally) {
-            showMessage("Delete");
+            this.operationRunner.run(() -> crudOperations.readAllToDoItem(), (items) -> {
+                        items.forEach((todoItem) ->
+                                crudOperations.deleteToDoItem(todoItem.getId()));
+                        deleteAllItemsLocally();
+                    }
+            );
             return true;
         } else {
             return super.onOptionsItemSelected(item);
@@ -187,6 +194,11 @@ public class OverviewActivity extends AppCompatActivity {
 
     public void sortItemsByName() {
         this.listviewItems.sort(this.currentComparator);
+        this.listviewAdapter.notifyDataSetChanged();
+    }
+
+    public void deleteAllItemsLocally() {
+        this.listviewItems.clear();
         this.listviewAdapter.notifyDataSetChanged();
     }
 
