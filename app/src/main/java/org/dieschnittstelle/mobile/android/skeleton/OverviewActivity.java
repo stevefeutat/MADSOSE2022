@@ -112,7 +112,7 @@ public class OverviewActivity extends AppCompatActivity {
                     Log.i(LOGGER, "ResultCode: " + result.getResultCode());
                     Log.i(LOGGER, "Data: " + result.getData());
                     if (result.getResultCode() == DetailviewActivity.STATUS_CREATED
-                            || result.getResultCode() == DetailviewActivity.STATUS_UPDATED) {
+                            || result.getResultCode() == DetailviewActivity.STATUS_UPDATED || result.getResultCode() == DetailviewActivity.STATUS_DELETED) {
                         long itemId = result.getData() != null ?
                                 result.getData().getLongExtra(DetailviewActivity.ARG_ITEM_ID, -1)
                                 : 0;
@@ -122,11 +122,25 @@ public class OverviewActivity extends AppCompatActivity {
                                         onToDoItemCreated(item);
                                     } else if (result.getResultCode() == DetailviewActivity.STATUS_UPDATED) {
                                         onToDoItemUpdated(item);
+                                    } else if (result.getResultCode() == DetailviewActivity.STATUS_DELETED) {
+                                        onToDoItemdeleted(item);
                                     }
                                 });
                     }
 
                 });
+    }
+
+    private void onToDoItemdeleted(TodoItem item) {
+        this.removeItemFromList(item);
+        sortItemsByName();
+    }
+
+    private void removeItemFromList(TodoItem item) {
+//        TodoItem itemToBeDeleted = this.listviewAdapter.getItem(this.listviewAdapter.getPosition(item));
+//        listviewItems.remove(this.listviewAdapter.getPosition(item));
+        listviewAdapter.remove(item);
+        this.listviewAdapter.notifyDataSetChanged();
     }
 
     private void onToDoItemCreated(TodoItem item) {
@@ -179,12 +193,7 @@ public class OverviewActivity extends AppCompatActivity {
             sortItemsByName();
             return true;
         } else if (item.getItemId() == R.id.deleteAllItemsLocally) {
-            this.operationRunner.run(() -> crudOperations.readAllToDoItem(), (items) -> {
-                        items.forEach((todoItem) ->
-                                crudOperations.deleteToDoItem(todoItem.getId()));
-                        deleteAllItemsLocally();
-                    }
-            );
+            //TODO
             return true;
         } else {
             return super.onOptionsItemSelected(item);

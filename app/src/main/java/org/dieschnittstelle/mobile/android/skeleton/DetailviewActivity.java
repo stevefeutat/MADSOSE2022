@@ -40,6 +40,7 @@ public class DetailviewActivity extends AppCompatActivity implements DetailviewV
     public static String ARG_ITEM_ID = "itemId";
     public static int STATUS_CREATED = 42;
     public static int STATUS_UPDATED = -42;
+    public static int STATUS_DELETED = -34;
 
     private TodoItem item;
     private ActivityListitemDetailviewBinding binding;
@@ -49,7 +50,7 @@ public class DetailviewActivity extends AppCompatActivity implements DetailviewV
     private ActivityResultLauncher<Intent> selectContactLauncher;
     private Uri latestSelectedContactUri;
     private static int REQUEST_CONTACT_PERMISSIONS_REQUEST_CODE = 1;
-    private final Calendar myCalendar = Calendar. getInstance () ;
+    private final Calendar myCalendar = Calendar.getInstance();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -132,28 +133,31 @@ public class DetailviewActivity extends AppCompatActivity implements DetailviewV
         }
         return false;
     }
+
     DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
         @Override
-        public void onDateSet (DatePicker view , int year , int monthOfYear , int dayOfMonth) {
-            myCalendar .set(Calendar. YEAR , year) ;
-            myCalendar .set(Calendar. MONTH , monthOfYear) ;
-            myCalendar .set(Calendar. DAY_OF_MONTH , dayOfMonth) ;
-            updateLabel() ;
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            myCalendar.set(Calendar.YEAR, year);
+            myCalendar.set(Calendar.MONTH, monthOfYear);
+            myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            updateLabel();
         }
-    } ;
-    private void updateLabel () {
-        String myFormat = "dd/MM/yy" ; //In which you need put here
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat , Locale. getDefault ()) ;
-        Date date = myCalendar .getTime() ;
+    };
+
+    private void updateLabel() {
+        String myFormat = "dd/MM/yy"; //In which you need put here
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.getDefault());
+        Date date = myCalendar.getTime();
 //        item.getExpiryDate().s .setText(sdf.format(date)) ;
 //        scheduleNotification(getNotification( btnDate .getText().toString()) , date.getTime()) ;
     }
-    public void setDate (View view) {
-        new DatePickerDialog(this, date ,
-                myCalendar .get(Calendar. YEAR ) ,
-                myCalendar .get(Calendar. MONTH ) ,
-                myCalendar .get(Calendar. DAY_OF_MONTH )
-        ).show() ;
+
+    public void setDate(View view) {
+        new DatePickerDialog(this, date,
+                myCalendar.get(Calendar.YEAR),
+                myCalendar.get(Calendar.MONTH),
+                myCalendar.get(Calendar.DAY_OF_MONTH)
+        ).show();
     }
 
     @Override
@@ -164,14 +168,27 @@ public class DetailviewActivity extends AppCompatActivity implements DetailviewV
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        Intent returnIntent = new Intent();
         if (item.getItemId() == R.id.selectContact) {
             selectContact();
+            return true;
+        } else if (item.getItemId() == R.id.deleteItem) {
+            this.operationRunner.run(() -> crudOperations.deleteToDoItem(this.item.getId()),
+                    (deleted) -> {
+                        Log.i("LOGGER", "deleteToDoItem" + deleted);
+                        returnIntent.putExtra(ARG_ITEM_ID, this.item.getId());
+
+                        setResult(STATUS_DELETED, returnIntent);
+                        this.binding.setViewModel(this);
+                        finish();
+                    });
             return true;
         } else {
             return super.onOptionsItemSelected(item);
         }
 
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
