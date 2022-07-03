@@ -24,20 +24,26 @@ import com.google.android.material.snackbar.Snackbar;
 
 import org.dieschnittstelle.mobile.android.skeleton.databinding.ActivityOverviewListitemViewBinding;
 import org.dieschnittstelle.mobile.android.skeleton.model.IToDoItemCRUDOperations;
-import org.dieschnittstelle.mobile.android.skeleton.model.RetrofitRemoteToDoItemCRUDOperations;
-import org.dieschnittstelle.mobile.android.skeleton.model.RoomLocalToDoItemCRUDOperations;
-import org.dieschnittstelle.mobile.android.skeleton.model.SimpleToDoItemCRUDOperations;
 import org.dieschnittstelle.mobile.android.skeleton.model.TodoItem;
 import org.dieschnittstelle.mobile.android.skeleton.util.MADAsyncOperationRunner;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class OverviewActivity extends AppCompatActivity {
     public static final String LOGGER = "OverviewActivity";
     public static final Comparator<TodoItem> NAME_COMPARATOR = Comparator.comparing(TodoItem::getName);
-    public static final Comparator<TodoItem> CHECKED_AND_NAME_COMPARATOR = Comparator.comparing(TodoItem::isChecked).reversed().thenComparing(TodoItem::getName);
+    public static final Comparator<TodoItem> CHECKED_COMPARATOR = Comparator.comparing(TodoItem::isChecked);
+    public static final Comparator<TodoItem> CHECKED_AND_DATE_COMPARATOR = Comparator.comparing(TodoItem::isChecked).reversed().thenComparing(TodoItem::getExpiryDate);
+    public static final Comparator<TodoItem> FAVORITE_COMPARATOR = Comparator.comparing(TodoItem::isFavorit);
+    public static final Comparator<TodoItem> FAVORITE_AND_DATE_COMPARATOR = Comparator.comparing(TodoItem::isFavorit).reversed().thenComparing(TodoItem::getExpiryDate);
+    public static final Comparator<TodoItem> DATE_AND_FAVORITE_COMPARATOR = Comparator.comparing(TodoItem::getExpiryDate).reversed().thenComparing(TodoItem::isFavorit);
 
     private ListView listView;
     private ArrayAdapter<TodoItem> listviewAdapter;
@@ -47,7 +53,8 @@ public class OverviewActivity extends AppCompatActivity {
     private ActivityResultLauncher<Intent> detailviewActivityLauncher;
     private ProgressBar progressBar;
     private MADAsyncOperationRunner operationRunner;
-    private Comparator<TodoItem> currentComparator = NAME_COMPARATOR;
+    private Comparator<TodoItem> currentComparator = CHECKED_COMPARATOR;
+    private final Calendar myCalendar = Calendar.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +82,7 @@ public class OverviewActivity extends AppCompatActivity {
                 () -> crudOperations.readAllToDoItem(),
                 items -> {
                     items.forEach(item -> this.addListItemView(item));
-                    sortItemsByName();
+                    sortItemsByComparator();
                 });
 
     }
@@ -85,12 +92,12 @@ public class OverviewActivity extends AppCompatActivity {
         return new ArrayAdapter<>(this, R.layout.activity_overview_listitem_view, listviewItems) {
             @NonNull
             @Override
-            public View getView(int position, @Nullable View existingListitemView, @NonNull ViewGroup parent) {
+            public View getView(int position, @Nullable View existingListItemView, @NonNull ViewGroup parent) {
                 //data we want to show
                 TodoItem item = super.getItem(position);
                 //the data binding object to show the data
-                ActivityOverviewListitemViewBinding itemBinding = (existingListitemView != null
-                        ? (ActivityOverviewListitemViewBinding) existingListitemView.getTag()
+                ActivityOverviewListitemViewBinding itemBinding = (existingListItemView != null
+                        ? (ActivityOverviewListitemViewBinding) existingListItemView.getTag()
                         : DataBindingUtil.inflate(getLayoutInflater(), R.layout.activity_overview_listitem_view, null, false));
 
                 itemBinding.setItem(item);
@@ -105,47 +112,55 @@ public class OverviewActivity extends AppCompatActivity {
     }
 
     private void initialiseActivityResultLaunchers() {
-
         detailviewActivityLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 (result) -> {
                     Log.i(LOGGER, "ResultCode: " + result.getResultCode());
                     Log.i(LOGGER, "Data: " + result.getData());
                     if (result.getResultCode() == DetailviewActivity.STATUS_CREATED
-                            || result.getResultCode() == DetailviewActivity.STATUS_UPDATED || result.getResultCode() == DetailviewActivity.STATUS_DELETED) {
+                            || result.getResultCode() == DetailviewActivity.STATUS_UPDATED
+                            || result.getResultCode() == DetailviewActivity.STATUS_DELETED) {
                         long itemId = result.getData() != null ?
                                 result.getData().getLongExtra(DetailviewActivity.ARG_ITEM_ID, -1)
                                 : 0;
+
                         this.operationRunner.run(() -> crudOperations.readToDoItem(itemId),
                                 item -> {
+
+
                                     if (result.getResultCode() == DetailviewActivity.STATUS_CREATED) {
                                         onToDoItemCreated(item);
                                     } else if (result.getResultCode() == DetailviewActivity.STATUS_UPDATED) {
                                         onToDoItemUpdated(item);
                                     } else if (result.getResultCode() == DetailviewActivity.STATUS_DELETED) {
-                                        onToDoItemdeleted(item);
+                                        onToDoItemdeleted(itemId);
+
                                     }
                                 });
+
+
                     }
 
                 });
     }
 
-    private void onToDoItemdeleted(TodoItem item) {
-        this.removeItemFromList(item);
-        sortItemsByName();
-    }
+    private void onToDoItemdeleted(long itemId) {
+        TodoItem itemtoBeDeleted = null;
 
-    private void removeItemFromList(TodoItem item) {
-//        TodoItem itemToBeDeleted = this.listviewAdapter.getItem(this.listviewAdapter.getPosition(item));
-//        listviewItems.remove(this.listviewAdapter.getPosition(item));
-        listviewAdapter.remove(item);
+        for (TodoItem item : listviewItems) {
+            if (item.getId() == itemId) {
+                itemtoBeDeleted = item;
+            }
+        }
+        listviewItems.remove(itemtoBeDeleted);
+        listviewAdapter.remove(itemtoBeDeleted);
         this.listviewAdapter.notifyDataSetChanged();
+        sortItemsByComparator();
     }
 
     private void onToDoItemCreated(TodoItem item) {
         this.addListItemView(item);
-        sortItemsByName();
+        sortItemsByComparator();
     }
 
     private void onToDoItemUpdated(TodoItem item) {
@@ -156,7 +171,7 @@ public class OverviewActivity extends AppCompatActivity {
         itemToBeUpdated.setChecked(item.isFavorit());
         itemToBeUpdated.setExpiryDate(item.getExpiryDate());
 //        this.listviewAdapter.notifyDataSetChanged();
-        sortItemsByName();
+        sortItemsByComparator();
     }
 
     private void addListItemView(TodoItem item) {
@@ -187,13 +202,25 @@ public class OverviewActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.sortList) {
+        if (item.getItemId() == R.id.sortAlpha) {
 
-            this.currentComparator = CHECKED_AND_NAME_COMPARATOR;
-            sortItemsByName();
+            this.currentComparator = NAME_COMPARATOR;
+            sortItemsByComparator();
             return true;
         } else if (item.getItemId() == R.id.deleteAllItemsLocally) {
-            //TODO
+            deleteAllItemsLocally();
+            return true;
+        } else if (item.getItemId() == R.id.sortfavorite) {
+            this.currentComparator = FAVORITE_COMPARATOR;
+            sortItemsByComparator();
+            return true;
+        } else if (item.getItemId() == R.id.sortByFavoriteDate) {
+            this.currentComparator = FAVORITE_AND_DATE_COMPARATOR;
+            sortItemsByComparator();
+            return true;
+        } else if (item.getItemId() == R.id.sortByDateFavorite) {
+            this.currentComparator = DATE_AND_FAVORITE_COMPARATOR;
+            sortItemsByComparator();
             return true;
         } else {
             return super.onOptionsItemSelected(item);
@@ -201,19 +228,20 @@ public class OverviewActivity extends AppCompatActivity {
 
     }
 
-    public void sortItemsByName() {
+    public void sortItemsByComparator() {
         this.listviewItems.sort(this.currentComparator);
         this.listviewAdapter.notifyDataSetChanged();
     }
 
     public void deleteAllItemsLocally() {
         this.listviewItems.clear();
+        this.listviewAdapter.clear();
         this.listviewAdapter.notifyDataSetChanged();
     }
 
     public void onCheckedChangedInListview(TodoItem item) {
         this.operationRunner.run(() -> crudOperations.updateToDoItem(item), updatedItem -> {
-            this.sortItemsByName();
+            this.sortItemsByComparator();
             showMessage("item.isChecked()=" + item.isChecked());
         });
 

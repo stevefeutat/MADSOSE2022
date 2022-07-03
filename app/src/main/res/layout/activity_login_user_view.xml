@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="controller"
+            type="org.dieschnittstelle.mobile.android.skeleton.LoginActivity" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/userEmailWrapper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/eMailInputField"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/uEmail"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:error="@{controller.errorStatus}"
+                android:onEditorAction="@{(view,actionId,event)->controller.checkEmailFieldInputComplete(view,actionId,false,false)}"
+                android:onFocusChange="@{(view,hasFocus)->controller.checkEmailFieldInputComplete(view,-1,hasFocus,true)}"
+                android:onTextChanged="@{(a,b,c,d)->controller.onEmailInputChanged()}"
+                android:background="@drawable/input_style"
+                android:inputType="textEmailAddress"
+                android:padding="15dp"
+                android:textSize="15sp"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/userPasswordWrapper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/passwordInputField"
+            app:layout_constraintTop_toBottomOf="@id/userEmailWrapper">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/uPassword"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_below="@id/userEmailWrapper"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="20dp"
+                android:error="@{controller.errorStatus}"
+                android:onEditorAction="@{(view,actionId,event)->controller.checkPasswordFieldInputComplete(view,actionId,false,false)}"
+                android:onFocusChange="@{(view,hasFocus)->controller.checkPasswordFieldInputComplete(view,-1,hasFocus,true)}"
+                android:onTextChanged="@{(a,b,c,d)->controller.onPasswordInputChanged()}"
+
+                android:background="@drawable/input_style"
+                android:inputType="numberPassword"
+                android:padding="15dp"
+                android:textSize="15sp" />
+
+            <Button
+                android:id="@+id/btn_login"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/uPassword"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginRight="20dp"
+                android:onClick="@{()->controller.launchOverview()}"
+                android:background="@drawable/button_style"
+                android:text="@string/login"
+                android:textColor="@android:color/white" />
+
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

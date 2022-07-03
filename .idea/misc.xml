@@ -3,8 +3,12 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/steve/StudioProjects/org.dieschnittstelle.mobile.android.skeleton/app/src/main/res/drawable/btn_custom.xml" value="0.1715" />
+        <entry key="..\:/Users/steve/StudioProjects/org.dieschnittstelle.mobile.android.skeleton/app/src/main/res/drawable/button_style.xml" value="0.1725" />
         <entry key="..\:/Users/steve/StudioProjects/org.dieschnittstelle.mobile.android.skeleton/app/src/main/res/drawable/checkbox_style.xml" value="0.1" />
+        <entry key="..\:/Users/steve/StudioProjects/org.dieschnittstelle.mobile.android.skeleton/app/src/main/res/drawable/input_style.xml" value="0.1715" />
         <entry key="..\:/Users/steve/StudioProjects/org.dieschnittstelle.mobile.android.skeleton/app/src/main/res/layout/activity_listitem_detailview.xml" value="0.1" />
+        <entry key="..\:/Users/steve/StudioProjects/org.dieschnittstelle.mobile.android.skeleton/app/src/main/res/layout/activity_login_user_view.xml" value="0.1" />
         <entry key="..\:/Users/steve/StudioProjects/org.dieschnittstelle.mobile.android.skeleton/app/src/main/res/layout/activity_overview_listitem_view.xml" value="0.1" />
         <entry key="..\:/Users/steve/StudioProjects/org.dieschnittstelle.mobile.android.skeleton/app/src/main/res/menu/detailview_menu.xml" value="0.1625" />
         <entry key="..\:/Users/steve/StudioProjects/org.dieschnittstelle.mobile.android.skeleton/app/src/main/res/menu/overview_menu.xml" value="0.1" />

@@ -14,6 +14,8 @@ import retrofit2.http.PUT;
 import retrofit2.http.Path;
 
 public class RetrofitRemoteToDoItemCRUDOperations implements IToDoItemCRUDOperations {
+    public static final String WEBAPP_BASEURL_LOCALHOST_FROM_ANDROIDSTUDIO_EMULATOR = "http://10.0.2.2:8080";
+
     public interface ToDoWebAPI {
         @POST("/api/todos")
         public Call<TodoItem> createToDo(@Body TodoItem item);
@@ -34,7 +36,7 @@ public class RetrofitRemoteToDoItemCRUDOperations implements IToDoItemCRUDOperat
     private ToDoWebAPI webAPI;
 
     public RetrofitRemoteToDoItemCRUDOperations() {
-        Retrofit apiBase = new Retrofit.Builder().baseUrl("http:10.0.2.2:8080")
+        Retrofit apiBase = new Retrofit.Builder().baseUrl("WEBAPP_BASEURL_LOCALHOST_FROM_ANDROIDSTUDIO_EMULATOR")
                 .addConverterFactory(GsonConverterFactory.create()).build();
         webAPI = apiBase.create(ToDoWebAPI.class);
     }

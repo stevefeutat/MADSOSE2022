@@ -18,6 +18,7 @@ import java.util.concurrent.Future;
 
 public class ToDoItemApplication extends Application {
     private IToDoItemCRUDOperations crudOperations;
+    public static final String WEBAPP_API_BASEURL_LOCALHOST_FROM_ANDROIDSTUDIO_EMULATOR = "http://10.0.2.2:8080/api/";
 
     @Override
     public void onCreate() {

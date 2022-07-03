@@ -1,6 +1,7 @@
 package org.dieschnittstelle.mobile.android.skeleton;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
@@ -9,6 +10,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.text.InputType;
 import android.util.Log;
 
 import android.view.Menu;
@@ -17,6 +19,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -41,6 +44,10 @@ public class DetailviewActivity extends AppCompatActivity implements DetailviewV
     public static int STATUS_CREATED = 42;
     public static int STATUS_UPDATED = -42;
     public static int STATUS_DELETED = -34;
+    private DatePickerDialog picker;
+    public String dateText;
+    String myFormat;
+    SimpleDateFormat sdf;
 
     private TodoItem item;
     private ActivityListitemDetailviewBinding binding;
@@ -55,6 +62,9 @@ public class DetailviewActivity extends AppCompatActivity implements DetailviewV
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        myFormat = "dd/MM/yyyy";
+        sdf = new SimpleDateFormat(myFormat, Locale.getDefault());
+        dateText = sdf.format(myCalendar.getTime());
         this.binding = DataBindingUtil.setContentView(this, R.layout.activity_listitem_detailview);
         this.selectContactLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -132,32 +142,6 @@ public class DetailviewActivity extends AppCompatActivity implements DetailviewV
             }
         }
         return false;
-    }
-
-    DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
-        @Override
-        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-            myCalendar.set(Calendar.YEAR, year);
-            myCalendar.set(Calendar.MONTH, monthOfYear);
-            myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-            updateLabel();
-        }
-    };
-
-    private void updateLabel() {
-        String myFormat = "dd/MM/yy"; //In which you need put here
-        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.getDefault());
-        Date date = myCalendar.getTime();
-//        item.getExpiryDate().s .setText(sdf.format(date)) ;
-//        scheduleNotification(getNotification( btnDate .getText().toString()) , date.getTime()) ;
-    }
-
-    public void setDate(View view) {
-        new DatePickerDialog(this, date,
-                myCalendar.get(Calendar.YEAR),
-                myCalendar.get(Calendar.MONTH),
-                myCalendar.get(Calendar.DAY_OF_MONTH)
-        ).show();
     }
 
     @Override
@@ -251,8 +235,40 @@ public class DetailviewActivity extends AppCompatActivity implements DetailviewV
             int contactDisplayNamePosition = cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME);
             String displayName = cursor.getString(contactDisplayNamePosition);
             Log.i("LOGGER", "displayName " + displayName);
+
         } else {
             Toast.makeText(this, "No contact found with internalId", Toast.LENGTH_LONG).show();
+            return;
         }
+        cursor =getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                null,"_id=?", new String[]{String.valueOf(internalId)}, null);
+        while (cursor.moveToNext()){
+            @SuppressLint("Range") String number= cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+            @SuppressLint("Range") int numberType= cursor.getInt(cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE));
+        }
+    }
+
+    public void selectDate() {
+        final Calendar cldr = Calendar.getInstance();
+        int day = cldr.get(Calendar.DAY_OF_MONTH);
+        int month = cldr.get(Calendar.MONTH);
+        int year = cldr.get(Calendar.YEAR);
+        // date picker dialog
+        picker = new DatePickerDialog(this,
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        myCalendar.set(Calendar.YEAR, year);
+                        myCalendar.set(Calendar.MONTH, monthOfYear);
+                        myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                        Date date = myCalendar.getTime();
+                        dateText=sdf.format(date);
+                        item.setExpiryDate(sdf.format(date));
+
+                    }
+                }, year, month, day);
+        picker.show();
+        this.binding.setViewModel(this);
+
     }
 }

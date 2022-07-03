@@ -70,13 +70,40 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:checked="@={viewModel.item.favorit}"
-                android:text=" favourit?"
+                android:text=" favorite?"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="@id/itemChecked" />
 
 
         </com.google.android.material.textfield.TextInputLayout>
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/itemDateWrapper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter expiry date"
+            app:layout_constraintTop_toBottomOf="@id/itemDescriptionWrapper">
+
+<!--            <Button-->
+<!--                android:id="@+id/button"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_gravity="center_horizontal"-->
+<!--                android:onClick="@{()->viewModel.selectDate()}"-->
+<!--                android:text="Datum" />-->
+
+            <EditText
+                android:id="@+id/itemDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="100dp"
+                android:layout_marginTop="150dp"
+                android:ems="10"
+                android:inputType="datetime"
+                android:onClick="@{()->viewModel.selectDate()}"
+                android:text="@={viewModel.item.expiryDate}"
+                app:layout_constraintTop_toBottomOf="@id/itemIsFavorit" />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <!--        app:srcCompat="@drawable/baseline_save_white_24dp"-->
         <!--    app:srcCompat="@android:drawable/ic_menu_save"-->

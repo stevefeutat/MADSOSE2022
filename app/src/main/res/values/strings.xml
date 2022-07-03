@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">StuffToDo</string>
     <string name="itemNameInputField">Name</string>
+    <string name="eMailInputField">Email</string>
+    <string name="passwordInputField">Password</string>
     <string name="itemDescriptionInputField">Description</string>
     <string name="itemExpiryDate">Expiry date</string>
+    <string name="login">Login</string>
 </resources>
