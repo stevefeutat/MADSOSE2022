@@ -25,6 +25,7 @@ import org.dieschnittstelle.mobile.android.skeleton.model.RetrofitRemoteUserItem
 import org.dieschnittstelle.mobile.android.skeleton.model.UserItem;
 import org.dieschnittstelle.mobile.android.skeleton.util.MADAsyncOperationRunner;
 
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LoginActivity extends AppCompatActivity implements LoginviewModel {
@@ -39,7 +40,7 @@ public class LoginActivity extends AppCompatActivity implements LoginviewModel {
     private ActivityResultLauncher<Intent> overviewActivityLauncher;
     //^[0-9]{1,6}$
     private final Pattern PWD
-            = Pattern.compile("\\\\d{6}");
+            = Pattern.compile("^\\d{1,6}$");
     public static final String LOGGER = "LoginActivity";
     private ProgressBar progressBar;
 
@@ -52,11 +53,10 @@ public class LoginActivity extends AppCompatActivity implements LoginviewModel {
         passwordText = findViewById(R.id.uPassword);
         loginButton = findViewById(R.id.btn_login);
         progressBar = findViewById(R.id.progressBar);
-        loginButton.setVisibility(View.VISIBLE);
+        loginButton.setVisibility(View.INVISIBLE);
         operationRunner = new MADAsyncOperationRunner(this, progressBar);
         this.operations = new RetrofitRemoteUserItemOperations();
         this.operationRunner = new MADAsyncOperationRunner(this, null);
-        this.operations.prepare(new UserItem("steve@byom.de","123456"));
         this.loginUserViewBinding.setController(this);
 
     }
@@ -92,30 +92,22 @@ public class LoginActivity extends AppCompatActivity implements LoginviewModel {
         return true;
     }
 
+
     @Override
-    public void onLoginUser(UserItem userItem) {
-        if(this.eMailText.getText().toString()=="steve@byom.de"&&this.passwordText.getText().toString()=="123456"){
-            Log.i(LOGGER, "Log in Successfull " );
-            this.operations.authenticateUser(userItem);
-            launchOverview();
-        }else{
-            Log.i(LOGGER, "Log in failed " );
-        }
+    public boolean onLoginUser() {
+//        this.operations.prepare(new UserItem("steve@byom.de", "123456"));
 
-    }
+        this.user = new UserItem(this.eMailText.getText().toString(), this.passwordText.getText().toString());
+//        this.operations.authenticateUser(this.user);
 
-    public boolean launchOverview() {
-        this.overviewActivityLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        Intent overViewIntent = new Intent(this, OverviewActivity.class);
-                        overviewActivityLauncher.launch(overViewIntent);
-                    }
-                }
-        );
-
-        return true;
+//        if (this.eMailText.getText().toString() == "steve@byom.de" && this.passwordText.getText().toString() == "123456") {
+            Intent overViewIntent = new Intent(this, OverviewActivity.class);
+            this.startActivity(overViewIntent);
+            return true;
+//        } else {
+//            Log.i(LOGGER, "Log in failed ");
+//            return false;
+//        }
     }
 
     @Override
@@ -135,13 +127,18 @@ public class LoginActivity extends AppCompatActivity implements LoginviewModel {
 
     private boolean validatePassword(TextInputEditText pwdInputText) {
         String pwdText = pwdInputText.getText().toString();
-        if (pwdText.isEmpty() || !PWD.matcher(pwdText).matches()) {
+//         || !PWD.matcher(pwdText).matches()
+        Matcher pwdMatcher=PWD.matcher(pwdText);
+        if (pwdText.isEmpty()|| !(pwdMatcher.matches())) {
             errorStatus = "invalid password";
             this.loginUserViewBinding.setController(this);
             return false;
         } else {
+            errorStatus = null;
             Log.i("LOGGER", "valid password");
-            checkButtonVisibility(loginButton);
+//            checkButtonVisibility(loginButton);
+            loginButton.setVisibility(View.VISIBLE);
+            this.loginUserViewBinding.setController(this);
             return true;
         }
     }
@@ -149,11 +146,12 @@ public class LoginActivity extends AppCompatActivity implements LoginviewModel {
     private boolean validateEmail(TextInputEditText eMailText) {
         String inputText = eMailText.getText().toString();
 
-        if (inputText.isEmpty() || !Patterns.EMAIL_ADDRESS.matcher(inputText).matches()) {
+        if (inputText.isEmpty()|| !Patterns.EMAIL_ADDRESS.matcher(inputText).matches() ) {
             errorStatus = "invalid email address";
             this.loginUserViewBinding.setController(this);
             return false;
         } else {
+            errorStatus = null;
             Log.i("LOGGER", "valid mail");
             return true;
         }
