@@ -222,7 +222,11 @@ public class OverviewActivity extends AppCompatActivity {
             this.currentComparator = DATE_AND_FAVORITE_COMPARATOR;
             sortItemsByComparator();
             return true;
-        } else {
+         } else if (item.getItemId() == R.id.sortChecked) {
+        this.currentComparator = CHECKED_COMPARATOR;
+        sortItemsByComparator();
+        return true;
+    } else {
             return super.onOptionsItemSelected(item);
         }
 

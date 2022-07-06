@@ -16,11 +16,11 @@
         app:showAsAction="never" />
     <item
         android:id="@+id/sortByDateFavorite"
-        android:title="SORT_CHECKED"
+        android:title="SORT_DATE_FAVORITE"
         app:showAsAction="never" />
     <item
         android:id="@+id/sortByFavoriteDate"
-        android:title="SORT_CHECKED"
+        android:title="SORT_FAVORITE_DATE"
         app:showAsAction="never" />
     <item
         android:id="@+id/deleteAllItemsLocally"

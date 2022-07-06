@@ -40,6 +40,7 @@ public class LoginActivity extends AppCompatActivity implements LoginviewModel {
     //^[0-9]{1,6}$
     private final Pattern PWD
             = Pattern.compile("\\\\d{6}");
+    public static final String LOGGER = "LoginActivity";
     private ProgressBar progressBar;
 
 
@@ -55,6 +56,7 @@ public class LoginActivity extends AppCompatActivity implements LoginviewModel {
         operationRunner = new MADAsyncOperationRunner(this, progressBar);
         this.operations = new RetrofitRemoteUserItemOperations();
         this.operationRunner = new MADAsyncOperationRunner(this, null);
+        this.operations.prepare(new UserItem("steve@byom.de","123456"));
         this.loginUserViewBinding.setController(this);
 
     }
@@ -92,9 +94,14 @@ public class LoginActivity extends AppCompatActivity implements LoginviewModel {
 
     @Override
     public void onLoginUser(UserItem userItem) {
-        this.operations.prepare(new UserItem("steve@byom.de","123456"));
-        launchOverview();
-        this.operations.authenticateUser(userItem);
+        if(this.eMailText.getText().toString()=="steve@byom.de"&&this.passwordText.getText().toString()=="123456"){
+            Log.i(LOGGER, "Log in Successfull " );
+            this.operations.authenticateUser(userItem);
+            launchOverview();
+        }else{
+            Log.i(LOGGER, "Log in failed " );
+        }
+
     }
 
     public boolean launchOverview() {
