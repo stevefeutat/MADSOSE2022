@@ -226,6 +226,14 @@ public class OverviewActivity extends AppCompatActivity {
         this.currentComparator = CHECKED_COMPARATOR;
         sortItemsByComparator();
         return true;
+    }  else if (item.getItemId() == R.id.reload) {
+            operationRunner.run(
+                    () -> crudOperations.readAllToDoItem(),
+                    items -> {
+                        items.forEach(itemLoaded -> this.addListItemView(itemLoaded));
+                        sortItemsByComparator();
+                    });
+        return true;
     } else {
             return super.onOptionsItemSelected(item);
         }
