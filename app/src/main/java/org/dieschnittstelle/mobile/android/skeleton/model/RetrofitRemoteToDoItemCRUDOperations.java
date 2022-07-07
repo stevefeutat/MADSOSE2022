@@ -36,7 +36,7 @@ public class RetrofitRemoteToDoItemCRUDOperations implements IToDoItemCRUDOperat
     private ToDoWebAPI webAPI;
 
     public RetrofitRemoteToDoItemCRUDOperations() {
-        Retrofit apiBase = new Retrofit.Builder().baseUrl("WEBAPP_BASEURL_LOCALHOST_FROM_ANDROIDSTUDIO_EMULATOR")
+        Retrofit apiBase = new Retrofit.Builder().baseUrl(WEBAPP_BASEURL_LOCALHOST_FROM_ANDROIDSTUDIO_EMULATOR)
                 .addConverterFactory(GsonConverterFactory.create()).build();
         webAPI = apiBase.create(ToDoWebAPI.class);
     }
