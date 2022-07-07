@@ -6,7 +6,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.PUT;
 
 public class RetrofitRemoteUserItemOperations implements IUserItemOperations {
-    public static final String WEBAPP_API_BASEURL_LOCALHOST_FROM_ANDROIDSTUDIO_EMULATOR = "http://10.0.2.2:8080/api/";
+    public static final String WEBAPP_API_BASEURL_LOCALHOST_FROM_ANDROIDSTUDIO_EMULATOR = "http://10.0.2.2:8080/api";
 
     public interface UserWebAPI {
         @PUT("/auth")
