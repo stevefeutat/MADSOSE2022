@@ -10,7 +10,7 @@
         android:id="@+id/reload"
         android:title="RELOAD"
         android:icon="@drawable/ic_baseline_refresh_24"
-        app:showAsAction="always" />
+        app:showAsAction="never" />
     <item
         android:id="@+id/sortfavorite"
         android:title="SORT_FAVORITE"
