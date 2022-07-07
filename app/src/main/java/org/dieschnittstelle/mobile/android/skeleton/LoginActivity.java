@@ -129,7 +129,7 @@ public class LoginActivity extends AppCompatActivity implements LoginviewModel {
         String pwdText = pwdInputText.getText().toString();
 //         || !PWD.matcher(pwdText).matches()
         Matcher pwdMatcher=PWD.matcher(pwdText);
-        if (pwdText.isEmpty()|| !(pwdMatcher.matches())) {
+        if (pwdText.isEmpty()) {
             errorStatus = "invalid password";
             this.loginUserViewBinding.setController(this);
             return false;

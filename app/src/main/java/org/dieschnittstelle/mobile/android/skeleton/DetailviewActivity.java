@@ -4,22 +4,22 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.text.InputType;
+import android.text.format.DateFormat;
 import android.util.Log;
 
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.EditText;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -44,10 +44,12 @@ public class DetailviewActivity extends AppCompatActivity implements DetailviewV
     public static int STATUS_CREATED = 42;
     public static int STATUS_UPDATED = -42;
     public static int STATUS_DELETED = -34;
-    private DatePickerDialog picker;
     public String dateText;
-    String myFormat;
-    SimpleDateFormat sdf;
+    public String myFormat;
+    public SimpleDateFormat sdf;
+    private DatePickerDialog datePickerDialog;
+    private TimePickerDialog timePicker;
+
 
     private TodoItem item;
     private ActivityListitemDetailviewBinding binding;
@@ -62,7 +64,7 @@ public class DetailviewActivity extends AppCompatActivity implements DetailviewV
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        myFormat = "dd/MM/yyyy";
+        myFormat = "dd-MM-yyyy hh:mm:ss";
         sdf = new SimpleDateFormat(myFormat, Locale.getDefault());
         dateText = sdf.format(myCalendar.getTime());
         this.binding = DataBindingUtil.setContentView(this, R.layout.activity_listitem_detailview);
@@ -253,21 +255,36 @@ public class DetailviewActivity extends AppCompatActivity implements DetailviewV
         int day = cldr.get(Calendar.DAY_OF_MONTH);
         int month = cldr.get(Calendar.MONTH);
         int year = cldr.get(Calendar.YEAR);
+        int hour = cldr.get(Calendar.HOUR_OF_DAY);
+        int minute = cldr.get(Calendar.MINUTE);
         // date picker dialog
-        picker = new DatePickerDialog(this,
+        datePickerDialog = new DatePickerDialog(this,
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
                         myCalendar.set(Calendar.YEAR, year);
                         myCalendar.set(Calendar.MONTH, monthOfYear);
                         myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                        Date date = myCalendar.getTime();
-                        dateText=sdf.format(date);
-                        item.setExpiryDate(sdf.format(date));
+//                        Date date = myCalendar.getTime();
+//                        dateText=sdf.format(date);
+//                        item.setExpiryDate(sdf.format(date));
 
                     }
+
+
                 }, year, month, day);
-        picker.show();
+        timePicker = new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                myCalendar.set(Calendar.HOUR,selectedHour);
+                myCalendar.set(Calendar.MINUTE,selectedMinute);
+            }
+        }, hour, minute, true);
+        datePickerDialog.show();
+//        timePicker.show();
+        Date date = myCalendar.getTime();
+        dateText=sdf.format(date);
+        item.setExpiryDate(sdf.format(date));
         this.binding.setViewModel(this);
 
     }
