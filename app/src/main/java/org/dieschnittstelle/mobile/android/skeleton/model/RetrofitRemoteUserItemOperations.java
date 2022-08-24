@@ -9,10 +9,10 @@ public class RetrofitRemoteUserItemOperations implements IUserItemOperations {
     public static final String WEBAPP_API_BASEURL_LOCALHOST_FROM_ANDROIDSTUDIO_EMULATOR = "http://10.0.2.2:8080/api/";
 
     public interface UserWebAPI {
-        @PUT("auth")
+        @PUT("users/auth")
         public boolean authenticateUser(UserItem user);
 
-        @PUT("prepare")
+        @PUT("users/prepare")
         public boolean prepare(UserItem user);
 
     }
